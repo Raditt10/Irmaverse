@@ -133,7 +133,7 @@ const Materials = () => {
       if (!res.ok) {
         let errMessage = `HTTP ${res.status}`;
         try {
-          const errData = await res.json();
+          const errData = await res.clone().json();
           errMessage = errData.error || errMessage;
         } catch {
           errMessage = await res.text();

@@ -910,7 +910,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "C:\\laragon\\www\\irmaVerse\\prisma\\generated\\client",
+      "value": "X:\\Irmaverse\\prisma\\generated\\client",
       "fromEnvVar": null
     },
     "config": {
@@ -924,7 +924,7 @@ const config = {
       }
     ],
     "previewFeatures": [],
-    "sourceFilePath": "C:\\laragon\\www\\irmaVerse\\prisma\\schema.prisma",
+    "sourceFilePath": "X:\\Irmaverse\\prisma\\schema.prisma",
     "isCustomOutput": true
   },
   "relativeEnvPaths": {
@@ -938,6 +938,7 @@ const config = {
     "db"
   ],
   "activeProvider": "mysql",
+  "postinstall": false,
   "inlineDatasources": {
     "db": {
       "url": {
