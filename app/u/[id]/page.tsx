@@ -204,9 +204,7 @@ export default function UserPublicProfile() {
       <div className="min-h-screen bg-[#FDFBF7] flex flex-col">
         <DashboardHeader />
         <div className="flex flex-1">
-          <div className="hidden lg:block h-[calc(100vh-80px)] sticky top-20">
-            <Sidebar />
-          </div>
+          <Sidebar />
           <div className="flex-1 flex items-center justify-center">
             <div className="text-center">
               <div className="w-24 h-24 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -244,9 +242,7 @@ export default function UserPublicProfile() {
     <div className="min-h-screen bg-[#FDFBF7] flex flex-col font-sans">
       <DashboardHeader />
       <div className="flex flex-1">
-        <div className="hidden lg:block h-[calc(100vh-80px)] sticky top-20">
-          <Sidebar />
-        </div>
+        <Sidebar />
         <main className="flex-1 w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 lg:py-10">
           <div className="mb-6">
             <BackButton />

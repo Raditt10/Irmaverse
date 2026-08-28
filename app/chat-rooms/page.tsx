@@ -359,7 +359,7 @@ const GlobalForumPage = () => {
     <div className="h-dvh bg-[#FDFBF7] flex flex-col overflow-hidden">
       {/* Main header – hidden when fullscreen */}
       <div
-        className={`${isDesktopChatFullscreen ? "hidden" : "hidden lg:block"} shrink-0`}
+        className={`${isDesktopChatFullscreen ? "hidden" : "block"} shrink-0`}
       >
         <DashboardHeader />
       </div>

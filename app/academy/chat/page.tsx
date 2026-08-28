@@ -704,11 +704,11 @@ const InstructorChatDashboard = () => {
     <div
       className="h-dvh bg-[#FDFBF7] flex flex-col overflow-hidden"
     >
-      <div className={`${isDesktopChatFullscreen ? "hidden" : "block"} shrink-0`}>
+      <div className={`${isDesktopChatFullscreen || isMobileViewingChat ? "hidden" : "block"} shrink-0`}>
         <DashboardHeader />
       </div>
       <div className="flex flex-1 overflow-hidden">
-        <div className={`${isDesktopChatFullscreen ? "hidden" : (isMobileViewingChat ? 'hidden lg:block' : 'block')} h-full shrink-0`}>
+        <div className={`${isDesktopChatFullscreen ? "hidden" : "block"} h-full shrink-0`}>
           <Sidebar />
         </div>
         <main className={`w-full flex-1 flex flex-col transition-all duration-300 ${isDesktopChatFullscreen ? 'p-0' : (isMobileViewingChat ? 'p-0' : 'p-4 lg:p-6')} overflow-hidden relative`}>
@@ -749,7 +749,7 @@ const InstructorChatDashboard = () => {
             {/* Chat Container */}
             <div className={`
               flex flex-1 bg-white overflow-hidden transition-all duration-300
-              ${isDesktopChatFullscreen ? 'rounded-none border-0' : (isMobileViewingChat ? 'fixed inset-0 z-9999 w-screen h-screen rounded-none' : 'lg:rounded-4xl lg:border-4 border-slate-200 lg:shadow-[0_8px_0_0_#cbd5e1]')}
+              ${isDesktopChatFullscreen || isMobileViewingChat ? 'rounded-none border-0' : 'lg:rounded-4xl lg:border-4 border-slate-200 lg:shadow-[0_8px_0_0_#cbd5e1]'}
             `}>
               {/* Sidebar - Conversation List */}
               <div

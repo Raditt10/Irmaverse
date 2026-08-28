@@ -338,9 +338,7 @@ export default function SettingsPage() {
         />
       )}
       <div className="flex flex-1">
-        <div className="hidden lg:block h-[calc(100vh-80px)] sticky top-20">
-          <Sidebar />
-        </div>
+        <Sidebar />
         <main className="flex-1 px-4 sm:px-6 lg:px-10 py-8 max-w-5xl mx-auto w-full">
           {/* Header */}
           <PageBanner

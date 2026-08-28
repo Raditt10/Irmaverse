@@ -703,13 +703,13 @@ const ChatPage = () => {
     <div className="h-dvh bg-[#FDFBF7] flex flex-col overflow-hidden">
       
       {/* Hide header & sidebar on mobile when viewing chat to maximize space */}
-      <div className={`${isDesktopChatFullscreen ? "hidden" : "block"} shrink-0`}>
+      <div className={`${isDesktopChatFullscreen || isMobileViewingChat ? "hidden" : "block"} shrink-0`}>
         <DashboardHeader />
       </div>
 
       <div className="flex flex-1 overflow-hidden">
         {/* Hide main sidebar on mobile or fullscreen desktop when viewing chat */}
-        <div className={`${isDesktopChatFullscreen ? "hidden" : (isMobileViewingChat ? 'hidden lg:block' : 'block')} h-full shrink-0`}>
+        <div className={`${isDesktopChatFullscreen ? "hidden" : "block"} h-full shrink-0`}>
           <Sidebar />
         </div>
 
@@ -727,7 +727,7 @@ const ChatPage = () => {
 
           <div className={`
             flex flex-1 bg-white overflow-hidden transition-all duration-300
-            ${isDesktopChatFullscreen ? 'rounded-none border-0' : (isMobileViewingChat ? 'fixed inset-0 z-[70] w-screen h-screen rounded-none' : 'lg:rounded-4xl lg:border-4 border-slate-200 lg:shadow-[0_8px_0_0_#cbd5e1]')}
+            ${isDesktopChatFullscreen || isMobileViewingChat ? 'rounded-none border-0' : 'lg:rounded-4xl lg:border-4 border-slate-200 lg:shadow-[0_8px_0_0_#cbd5e1]'}
           `}>
             
             {/* --- LIST CONVERSATIONS (SIDEBAR CHAT) --- */}
