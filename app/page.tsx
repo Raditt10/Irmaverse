@@ -448,7 +448,7 @@ export default function Home() {
             </div>
 
             {/* Gambar Model Khusus Mobile (Menempel di Kanan) */}
-            <div className="absolute right-[-1rem] top-24 sm:top-20 flex lg:hidden justify-end pointer-events-none z-0">
+            <div className="absolute right-[-1rem] top-6 sm:top-10 flex lg:hidden justify-end pointer-events-none z-0">
                <div className="absolute inset-0 bg-emerald-400/20 blur-[60px] rounded-full pointer-events-none" />
                <img
                 src="/model.webp"
