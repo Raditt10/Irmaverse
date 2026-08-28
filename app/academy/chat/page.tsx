@@ -137,6 +137,22 @@ const InstructorChatDashboard = () => {
   const [isDesktopChatFullscreen, setIsDesktopChatFullscreen] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [toast, setToast] = useState<{ show: boolean; message: string; type: 'success' | 'error' } | null>(null);
+  const [viewportHeight, setViewportHeight] = useState<number | null>(null);
+
+  // Handle mobile keyboard: listen to visualViewport resize to adjust chat height
+  useEffect(() => {
+    const vv = window.visualViewport;
+    if (!vv) return;
+
+    const handleResize = () => {
+      setViewportHeight(vv.height);
+    };
+
+    vv.addEventListener('resize', handleResize);
+    handleResize();
+
+    return () => vv.removeEventListener('resize', handleResize);
+  }, []);
 
   useEffect(() => {
     if (toast?.show) {
@@ -702,7 +718,8 @@ const InstructorChatDashboard = () => {
 
   return (
     <div
-      className="h-dvh bg-[#FDFBF7] flex flex-col overflow-hidden"
+      className="bg-[#FDFBF7] flex flex-col overflow-hidden"
+      style={{ height: viewportHeight ? `${viewportHeight}px` : '100dvh' }}
     >
       <div className={`${isDesktopChatFullscreen || isMobileViewingChat ? "hidden" : "block"} shrink-0`}>
         <DashboardHeader />

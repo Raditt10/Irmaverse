@@ -77,6 +77,22 @@ const GlobalForumPage = () => {
     type: "success" | "error";
   } | null>(null);
   const [isDesktopChatFullscreen, setIsDesktopChatFullscreen] = useState(false);
+  const [viewportHeight, setViewportHeight] = useState<number | null>(null);
+
+  // Handle mobile keyboard: listen to visualViewport resize to adjust chat height
+  useEffect(() => {
+    const vv = window.visualViewport;
+    if (!vv) return;
+
+    const handleResize = () => {
+      setViewportHeight(vv.height);
+    };
+
+    vv.addEventListener('resize', handleResize);
+    handleResize();
+
+    return () => vv.removeEventListener('resize', handleResize);
+  }, []);
 
   // ── Message state ─────────────────────────────────────────────────────────
   const [messages, setMessages] = useState<GroupMessage[]>([]);

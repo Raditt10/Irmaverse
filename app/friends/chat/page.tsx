@@ -147,6 +147,23 @@ const ChatPage = () => {
   const [isDesktopChatFullscreen, setIsDesktopChatFullscreen] = useState(false);
   const [modalSearchTerm, setModalSearchTerm] = useState("");
   const [favoriteInstructorIds, setFavoriteInstructorIds] = useState<string[]>([]);
+  const [viewportHeight, setViewportHeight] = useState<number | null>(null);
+
+  // Handle mobile keyboard: listen to visualViewport resize to adjust chat height
+  useEffect(() => {
+    const vv = window.visualViewport;
+    if (!vv) return;
+
+    const handleResize = () => {
+      setViewportHeight(vv.height);
+    };
+
+    vv.addEventListener('resize', handleResize);
+    // Set initial
+    handleResize();
+
+    return () => vv.removeEventListener('resize', handleResize);
+  }, []);
   
   const { confirm, alert: customAlert } = useConfirm();
   
@@ -214,7 +231,7 @@ const ChatPage = () => {
         setSelectedConversationId(data.id);
         setShowNewChatModal(false);
         // Clear query params
-        router.replace("/friends/chat", { scroll: false });
+        window.history.replaceState(null, '', '/friends/chat');
         if (window.innerWidth < 1024) {
           setIsMobileViewingChat(true);
         }
@@ -750,7 +767,10 @@ const ChatPage = () => {
 
   return (
     // Gunakan 100dvh untuk handle browser mobile address bar
-    <div className="h-dvh bg-[#FDFBF7] flex flex-col overflow-hidden">
+    <div 
+      className="bg-[#FDFBF7] flex flex-col overflow-hidden"
+      style={{ height: viewportHeight ? `${viewportHeight}px` : '100dvh' }}
+    >
       
       {/* Hide header & sidebar on mobile when viewing chat to maximize space */}
       <div className={`${isDesktopChatFullscreen || isMobileViewingChat ? "hidden" : "block"} shrink-0`}>
@@ -894,7 +914,7 @@ const ChatPage = () => {
                             setSelectedConversationId(null);
                             if (isMobileViewingChat) setIsMobileViewingChat(false);
                             // Clear query params so it doesn't re-trigger the auto-select effect
-                            router.replace("/friends/chat", { scroll: false });
+                            window.history.replaceState(null, '', '/friends/chat');
                           }}
                          className="p-1 lg:p-2 bg-white border-2 border-slate-200 shadow-[0_3px_0_0_#cbd5e1] hover:shadow-[0_4px_0_0_#14b8a6] hover:border-teal-400 rounded-full transition-all active:translate-y-0.5 active:shadow-none"
                          label=""
@@ -939,20 +959,7 @@ const ChatPage = () => {
                           <Maximize2 className="h-6 w-6" strokeWidth={2.5} />
                         )}
                       </button>
-                      <div className="relative">
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <button
-                              className="p-2 hover:bg-slate-100 rounded-full text-slate-400 transition-all flex items-center justify-center active:scale-95"
-                            >
-                              <MoreHorizontal className="h-6 w-6" />
-                            </button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end" className="w-60">
-                            
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </div>
+
                     </div>
                   </div>
 

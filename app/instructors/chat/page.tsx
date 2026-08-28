@@ -147,6 +147,22 @@ const ChatPage = () => {
   const [isDesktopChatFullscreen, setIsDesktopChatFullscreen] = useState(false);
   const [modalSearchTerm, setModalSearchTerm] = useState("");
   const [favoriteInstructorIds, setFavoriteInstructorIds] = useState<string[]>([]);
+  const [viewportHeight, setViewportHeight] = useState<number | null>(null);
+
+  // Handle mobile keyboard: listen to visualViewport resize to adjust chat height
+  useEffect(() => {
+    const vv = window.visualViewport;
+    if (!vv) return;
+
+    const handleResize = () => {
+      setViewportHeight(vv.height);
+    };
+
+    vv.addEventListener('resize', handleResize);
+    handleResize();
+
+    return () => vv.removeEventListener('resize', handleResize);
+  }, []);
   
   const { confirm, alert: customAlert } = useConfirm();
   
@@ -700,7 +716,10 @@ const ChatPage = () => {
 
   return (
     // Gunakan 100dvh untuk handle browser mobile address bar
-    <div className="h-dvh bg-[#FDFBF7] flex flex-col overflow-hidden">
+    <div 
+      className="bg-[#FDFBF7] flex flex-col overflow-hidden"
+      style={{ height: viewportHeight ? `${viewportHeight}px` : '100dvh' }}
+    >
       
       {/* Hide header & sidebar on mobile when viewing chat to maximize space */}
       <div className={`${isDesktopChatFullscreen || isMobileViewingChat ? "hidden" : "block"} shrink-0`}>
@@ -833,7 +852,7 @@ const ChatPage = () => {
                             setSelectedConversationId(null);
                             if (isMobileViewingChat) setIsMobileViewingChat(false);
                             // Clear query params so it doesn't re-trigger the auto-select effect
-                            router.replace("/instructors/chat", { scroll: false });
+                            window.history.replaceState(null, '', '/instructors/chat');
                           }}
                          className="p-1 lg:p-2 bg-white border-2 border-slate-200 shadow-[0_3px_0_0_#cbd5e1] hover:shadow-[0_4px_0_0_#14b8a6] hover:border-teal-400 rounded-full transition-all active:translate-y-0.5 active:shadow-none"
                          label=""

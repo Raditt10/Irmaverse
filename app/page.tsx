@@ -370,51 +370,61 @@ export default function Home() {
                   </span>
                 </button>
               </Link>
-              
-              {/* Burger Menu Button (Mobile) */}
-              <button 
-                className="lg:hidden flex items-center justify-center p-2 rounded-xl bg-white/20 border border-white/30 text-white hover:bg-white/30 active:scale-95 transition-all shadow-md z-50"
-                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                aria-label="Buka menu navigasi"
-              >
-                {isMobileMenuOpen ? (
-                  <X className="h-5 w-5" strokeWidth={2.5} />
-                ) : (
-                  <Menu className="h-5 w-5" strokeWidth={2.5} />
-                )}
-              </button>
             </div>
           </div>
-
-          {/* Mobile Menu Dropdown */}
-          {isMobileMenuOpen && (
-            <div className="lg:hidden absolute top-[130px] left-3 right-3 bg-white/95 backdrop-blur-md rounded-2xl p-4 shadow-2xl border-2 border-emerald-100/50 z-50 animate-in slide-in-from-top-4 fade-in duration-200">
-              <nav className="flex flex-col gap-2 text-emerald-800 font-black">
-                {['Beranda', 'Galeri', 'FAQ'].map((item) => {
-                  const sectionId = item.toLowerCase();
-                  return (
-                    <Link 
-                      key={item} 
-                      href={`#${sectionId}`}
-                      onClick={(e) => {
-                        e.preventDefault();
-                        setIsMobileMenuOpen(false);
-                        if (sectionId === 'beranda') {
-                          window.scrollTo({ top: 0, behavior: "smooth" });
-                        } else {
-                          document.getElementById(sectionId)?.scrollIntoView({ behavior: "smooth" });
-                        }
-                      }}
-                      className="p-3 border-b border-emerald-100 hover:bg-emerald-50 rounded-xl transition-colors flex items-center justify-between group"
-                    >
-                      <span>{item}</span>
-                      <ArrowRight className="h-4 w-4 text-emerald-300 group-hover:text-emerald-500 group-hover:translate-x-1 transition-all" strokeWidth={2.5} />
-                    </Link>
-                  );
-                })}
-              </nav>
+          {/* Mobile Floating Expandable Navbar (Right) */}
+          <div className="lg:hidden fixed right-3 sm:right-6 top-1/2 -translate-y-1/2 flex flex-col items-center gap-3 z-[100]">
+            {/* The Expandable Menu Items */}
+            <div className={`flex flex-col gap-3 transition-all duration-300 origin-bottom ${
+              isMobileMenuOpen 
+                ? "opacity-100 scale-100 translate-y-0 pointer-events-auto" 
+                : "opacity-0 scale-75 translate-y-4 pointer-events-none"
+            }`}>
+              {[
+                { id: 'beranda', icon: HomeIcon, label: 'Beranda' },
+                { id: 'galeri', icon: Camera, label: 'Galeri Kegiatan' },
+                { id: 'faq', icon: HelpCircle, label: 'Pertanyaan Umum' },
+              ].map((item) => {
+                const Icon = item.icon;
+                return (
+                  <Link
+                    key={item.id}
+                    href={`#${item.id}`}
+                    title={item.label}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setIsMobileMenuOpen(false);
+                      if (item.id === 'beranda') {
+                        window.scrollTo({ top: 0, behavior: "smooth" });
+                      } else {
+                        document.getElementById(item.id)?.scrollIntoView({ behavior: "smooth" });
+                      }
+                    }}
+                    className="p-3 rounded-full bg-white text-emerald-600 border-2 border-emerald-100 shadow-lg hover:bg-emerald-500 hover:text-white active:scale-90 transition-all duration-200 flex items-center justify-center"
+                  >
+                    <Icon className="h-5 w-5 stroke-[2.5px]" />
+                  </Link>
+                );
+              })}
             </div>
-          )}
+
+            {/* Trigger Button (Burger / Close) */}
+            <button
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              className={`p-3.5 rounded-full text-white shadow-xl active:scale-95 transition-all duration-300 flex items-center justify-center border-2 border-white/20 ${
+                isMobileMenuOpen 
+                  ? "bg-rose-500 hover:bg-rose-600 rotate-90" 
+                  : "bg-emerald-600 hover:bg-emerald-500 rotate-0"
+              }`}
+              aria-label="Toggle navigation menu"
+            >
+              {isMobileMenuOpen ? (
+                <X className="h-5 w-5 stroke-[2.5px]" />
+              ) : (
+                <Menu className="h-5 w-5 stroke-[2.5px]" />
+              )}
+            </button>
+          </div>
 
           {/* Hero Content Area */}
           <div className="relative flex flex-col lg:grid lg:grid-cols-2 gap-6 sm:gap-8 items-center pt-4 sm:pt-8 max-w-7xl mx-auto w-full px-3 sm:px-6 lg:px-8">
