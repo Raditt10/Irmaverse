@@ -322,7 +322,7 @@ export default function Home() {
         {/* Header & Hero Section */}
         <div className="flex flex-col gap-3 sm:gap-4 pb-8 sm:pb-12">
           {/* Navbar */}
-          <div className="flex items-center justify-between gap-2 max-w-7xl mx-auto w-full px-3 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between gap-3 max-w-7xl mx-auto w-full px-3 sm:px-6 lg:px-8">
             <div className="flex items-center hover:scale-105 transition-transform duration-300">
               {/* LOGO CARD */}
               <img 
@@ -332,42 +332,68 @@ export default function Home() {
               />
             </div>
 
-            <nav className="hidden lg:flex items-center gap-6 text-sm font-semibold text-white/90">
-              {['Beranda', 'Galeri', 'FAQ'].map((item) => {
-                const sectionId = item.toLowerCase();
+            {/* Cartoon Nav Pill (Desktop) */}
+            <nav className="hidden lg:flex items-center gap-2 bg-emerald-950/40 backdrop-blur-md p-1.5 rounded-full border-2 border-white/40 shadow-[4px_4px_0px_0px_rgba(0,0,0,0.2)]">
+              {[
+                { id: 'beranda', name: 'Beranda', icon: HomeIcon },
+                { id: 'galeri', name: 'Galeri Kegiatan', icon: Camera },
+                { id: 'faq', name: 'FAQ', icon: HelpCircle },
+              ].map((item) => {
+                const Icon = item.icon;
                 const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
                   e.preventDefault();
-                  if (sectionId === 'beranda') {
+                  if (item.id === 'beranda') {
                     window.scrollTo({ top: 0, behavior: "smooth" });
                   } else {
-                    document.getElementById(sectionId)?.scrollIntoView({ behavior: "smooth" });
+                    document.getElementById(item.id)?.scrollIntoView({ behavior: "smooth" });
                   }
                 };
                 return (
                   <Link 
-                    key={item} 
-                    href={`#${sectionId}`} 
+                    key={item.id} 
+                    href={`#${item.id}`} 
                     onClick={handleClick}
-                    className="hover:text-white hover:scale-110 transition-all hover:drop-shadow-[0_2px_0_rgba(0,0,0,0.2)]"
+                    className="group flex items-center gap-2 px-4 py-2 rounded-full font-black text-sm text-white/95 hover:text-emerald-900 hover:bg-white border-2 border-transparent hover:border-emerald-400 hover:shadow-[3px_3px_0px_0px_#064e3b] transition-all duration-200 active:translate-y-0.5"
                   >
-                    {item}
+                    <div className="w-6 h-6 rounded-full bg-white/20 group-hover:bg-emerald-100 flex items-center justify-center transition-colors shadow-inner group-hover:rotate-12 duration-200">
+                      <Icon className="h-3.5 w-3.5 text-yellow-300 group-hover:text-emerald-600 stroke-[3px] transition-colors" />
+                    </div>
+                    <span className="tracking-wide">{item.name}</span>
                   </Link>
                 );
               })}
             </nav>
 
+            {/* Right Action Buttons */}
             <div className="flex items-center gap-2 sm:gap-3">
-              <div className="hidden sm:flex items-center gap-2 text-white/70">
-                <Instagram className="h-5 w-5 hover:scale-125 transition-transform cursor-pointer hover:text-white" />
-                <Youtube className="h-5 w-5 hover:scale-125 transition-transform cursor-pointer hover:text-white" />
-                <Facebook className="h-5 w-5 hover:scale-125 transition-transform cursor-pointer hover:text-white" />
+              <div className="hidden sm:flex items-center gap-1.5">
+                {[
+                  { icon: Instagram, href: "https://instagram.com" },
+                  { icon: Youtube, href: "https://youtube.com" },
+                  { icon: Facebook, href: "https://facebook.com" },
+                ].map((social, i) => {
+                  const Icon = social.icon;
+                  return (
+                    <a
+                      key={i}
+                      href={social.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-8 h-8 rounded-full bg-white/15 hover:bg-white text-white/90 hover:text-emerald-700 flex items-center justify-center border-2 border-white/30 hover:border-emerald-400 shadow-sm hover:shadow-[2px_2px_0px_0px_#064e3b] hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200"
+                    >
+                      <Icon className="h-4 w-4 stroke-[2.5px]" />
+                    </a>
+                  );
+                })}
               </div>
               <Link href="/auth">
-                <button className="relative overflow-hidden px-4 sm:px-7 py-2 text-xs sm:text-sm font-bold rounded-2xl border-b-4 border-emerald-600 bg-white text-emerald-700 shadow-xl group transition-all duration-300 active:translate-y-1 hover:scale-105">
-                  <span className="flex items-center gap-1.5 sm:gap-2 z-10 relative">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 sm:h-5 sm:w-5 text-emerald-500 stroke-[3px]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
-                    <span>Login</span>
+                <button className="relative overflow-hidden px-4 sm:px-6 py-2 sm:py-2.5 text-xs sm:text-sm font-black rounded-full sm:rounded-2xl border-b-4 border-emerald-800 bg-white text-emerald-800 shadow-[3px_3px_0px_0px_rgba(0,0,0,0.2)] group transition-all duration-200 active:border-b-0 active:translate-y-1 hover:brightness-105 flex items-center gap-2">
+                  <span className="w-5 h-5 rounded-full bg-emerald-100 flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5 text-emerald-600 stroke-[3px]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                    </svg>
                   </span>
+                  <span>Login</span>
                 </button>
               </Link>
             </div>
@@ -444,16 +470,18 @@ export default function Home() {
                 Platform digital yang menghubungkan seluruh anggota IRMA dengan sistem terorganisir, modern, dan efisien untuk pembelajaran Islami yang lebih baik.
               </p>
 
-              <div className="w-full max-w-md bg-white/20 rounded-2xl p-1.5 sm:p-2 border-2 border-white/20 shadow-[4px_4px_0px_0px_rgba(0,0,0,0.1)] sm:shadow-[6px_6px_0px_0px_rgba(0,0,0,0.1)] backdrop-blur-sm">
-                <SearchBar limitTypes={["news", "schedule"]} />
-              </div>
-
-              <div className="flex items-center gap-3 sm:gap-4 mt-4 sm:mt-6">
-                <img src="/logo13.webp" alt="Logo" className="h-10 sm:h-12 w-auto object-contain drop-shadow-md" />
+              {/* Logo Sekolah SMKN 13 Bandung */}
+              <div className="flex items-center gap-3 sm:gap-4 pt-1 sm:pt-2">
+                <img src="/logo13.webp" alt="Logo SMKN 13 Bandung" className="h-10 sm:h-12 w-auto object-contain drop-shadow-md" />
                 <div>
                   <p className="text-[9px] sm:text-[10px] font-extrabold text-emerald-200 uppercase tracking-tight drop-shadow-sm">Aplikasi Dipelihara di</p>
                   <p className="text-sm sm:text-base font-bold text-white drop-shadow-sm">SMKN 13 Bandung</p>
                 </div>
+              </div>
+
+              {/* Search Bar (Berada di Bawah Logo Sekolah) */}
+              <div className="w-full max-w-md bg-white/20 rounded-2xl p-1.5 sm:p-2 border-2 border-white/20 shadow-[4px_4px_0px_0px_rgba(0,0,0,0.1)] sm:shadow-[6px_6px_0px_0px_rgba(0,0,0,0.1)] backdrop-blur-sm relative z-30">
+                <SearchBar limitTypes={["news", "schedule"]} />
               </div>
             </div>
 
@@ -491,7 +519,7 @@ export default function Home() {
       </div>
 
       {/* Menu Icons Section - Cartoon Style */}
-      <section id="fitur" className="py-14 sm:py-20 relative bg-white overflow-hidden">
+      <section id="fitur" className="py-14 sm:py-20 relative bg-white overflow-hidden z-0">
         {/* Background decorations */}
         <div className="absolute top-10 left-10 w-32 h-32 bg-emerald-100/40 rounded-full blur-2xl pointer-events-none" />
         <div className="absolute bottom-10 right-10 w-40 h-40 bg-teal-100/40 rounded-full blur-2xl pointer-events-none" />
@@ -500,8 +528,8 @@ export default function Home() {
         <div className="max-w-6xl mx-auto px-3 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center mb-8 sm:mb-14">
 
-            <h2 className="text-2xl sm:text-4xl md:text-5xl font-extrabold bg-linear-to-r from-emerald-500 via-teal-500 to-cyan-500 bg-clip-text text-transparent mb-2 sm:mb-4 drop-shadow-[2px_2px_0px_rgba(0,0,0,0.3)] relative z-10">Fitur Tersedia</h2>
-            <p className="text-sm sm:text-lg text-slate-500 font-bold max-w-md mx-auto">Semua yang kamu butuhkan untuk aktivitas IRMA </p>
+            <h2 className="text-2xl sm:text-4xl md:text-5xl font-extrabold bg-linear-to-r from-emerald-500 via-teal-500 to-cyan-500 bg-clip-text text-transparent mb-2 sm:mb-4 drop-shadow-[2px_2px_0px_rgba(0,0,0,0.3)] relative z-10">Apa saja yang ada?</h2>
+            <p className="text-sm sm:text-lg text-slate-500 font-bold max-w-md mx-auto">Semua yang dibutuhkan untuk Kegiatan IRMA Al-Hikmah </p>
           </div>
 
           <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-5 lg:gap-6">
@@ -622,8 +650,8 @@ export default function Home() {
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           {/* Section Header */}
-          <div className="text-center mb-10 sm:mb-16">
-            <h2 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-white mb-3 sm:mb-4 leading-tight drop-shadow-[3px_3px_0px_rgba(0,0,0,0.15)]">
+          <div className="text-center mb-6 sm:mb-8 lg:mb-10">
+            <h2 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-white mb-2 sm:mb-3 leading-tight drop-shadow-[3px_3px_0px_rgba(0,0,0,0.15)]">
                FAQ <span className="bg-linear-to-r from-yellow-200 via-emerald-100 to-cyan-200 bg-clip-text text-transparent" style={{ textShadow: "2px 2px 0px rgba(0,0,0,0.2)" }}>Terkait</span>
             </h2>
             <p className="text-xs sm:text-base md:text-lg text-white/90 max-w-2xl mx-auto font-bold leading-relaxed drop-shadow-sm">
@@ -632,7 +660,7 @@ export default function Home() {
           </div>
 
           {/* 2-Column Comic Grid: Left Questions, Right Model Showcase */}
-          <div className="relative flex flex-col items-start lg:grid lg:grid-cols-2 gap-2 sm:gap-4 lg:gap-8 lg:items-end">
+          <div className="relative flex flex-col items-start lg:grid lg:grid-cols-2 gap-2 sm:gap-4 lg:gap-8 lg:items-start">
             {/* Left Column: Comic Bubble Questions */}
             <div className="flex flex-col gap-1.5 xs:gap-2 sm:gap-2.5 lg:gap-3.5 w-[44%] xs:w-[45%] sm:w-[48%] max-w-[160px] xs:max-w-[175px] sm:max-w-[210px] lg:max-w-none lg:w-full z-10 relative items-start">
               {[
@@ -704,7 +732,7 @@ export default function Home() {
                 <img
                   src="/model_2.webp"
                   alt="Role Model FAQ IRMA"
-                  className="relative h-[230px] xs:h-[255px] sm:h-[310px] lg:h-[620px] xl:h-[700px] 2xl:h-[760px] w-auto max-w-none lg:max-w-full object-contain object-bottom hover:scale-105 origin-bottom transition-transform duration-500 pointer-events-auto"
+                  className="relative h-[230px] xs:h-[255px] sm:h-[310px] lg:h-[480px] xl:h-[540px] 2xl:h-[600px] w-auto max-w-none lg:max-w-full object-contain object-bottom hover:scale-105 origin-bottom transition-transform duration-500 pointer-events-auto"
                   style={{
                     filter: "drop-shadow(4px 4px 0px #ffffff) drop-shadow(12px 12px 0px rgba(0,0,0,0.2))",
                     WebkitMaskImage: "linear-gradient(to bottom, black 85%, transparent 100%)",
@@ -802,7 +830,7 @@ export default function Home() {
                 {[
                   { name: 'Halaman utama', id: 'beranda', icon: HomeIcon },
                   { name: 'Galeri Kegiatan', id: 'galeri', icon: Camera },
-                  { name: 'Pertanyaan Umum', id: 'faq', icon: HelpCircle },
+                  { name: 'FaQ Terkait', id: 'faq', icon: HelpCircle },
                 ].map((link, i) => {
                   const Icon = link.icon;
                   const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
@@ -849,7 +877,7 @@ export default function Home() {
           
           <div className="border-t border-slate-200 pt-8 flex flex-col sm:flex-row justify-between items-center gap-4">
             <p className="text-center sm:text-left text-slate-500 text-sm font-medium">
-              &copy; {new Date().getFullYear()} <span className="text-emerald-600 font-bold">IRMAVerse</span>. All rights reserved.
+              &copy; {new Date().getFullYear()} <span className="text-emerald-600 font-bold">IRMA Al-Hikmah</span>. All rights reserved.
             </p>
           </div>
         </div>

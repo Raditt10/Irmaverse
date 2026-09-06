@@ -272,6 +272,14 @@ export default function SearchBar({
 
   return (
     <div ref={searchRef} className={`relative ${className}`}>
+      {/* Dimmed Backdrop when search is active to cover the page */}
+      {isOpen && query.length >= 2 && (
+        <div
+          className="fixed inset-0 bg-black/60 backdrop-blur-xs z-40 transition-opacity duration-200"
+          onClick={() => setIsOpen(false)}
+        />
+      )}
+
       {!isExpanded && isCollapsible ? (
         <button
           onClick={() => toggleExpand(true)}
@@ -281,7 +289,7 @@ export default function SearchBar({
           <Search className="h-5 w-5 text-slate-500 group-hover:text-emerald-600 transition-colors" strokeWidth={2.5} />
         </button>
       ) : (
-        <div className={`relative group animate-in fade-in slide-in-from-right-4 duration-300 w-full`}>
+        <div className={`relative ${isOpen && query.length >= 2 ? 'z-50' : 'z-10'} group animate-in fade-in slide-in-from-right-4 duration-300 w-full`}>
           <div className="absolute left-4 top-1/2 -translate-y-1/2 h-8 w-8 rounded-xl bg-emerald-100 border border-emerald-200 flex items-center justify-center group-focus-within:bg-emerald-500 group-focus-within:border-emerald-600 transition-all duration-300">
             <Search 
               className="h-4 w-4 text-emerald-500 group-focus-within:text-white transition-colors duration-300" 
@@ -305,7 +313,10 @@ export default function SearchBar({
             autoCorrect="off"
             spellCheck={false}
             readOnly={inputLocked}
-            onFocus={() => setInputLocked(false)}
+            onFocus={() => {
+              setInputLocked(false);
+              if (query.length >= 2) setIsOpen(true);
+            }}
             onPointerDown={() => setInputLocked(false)}
             onChange={handleInputChange}
             placeholder={placeholder || (limitTypes?.includes("news") ? "Cari berita & kegiatan..." : "Cari di IRMA Verse...")}
@@ -336,7 +347,7 @@ export default function SearchBar({
       )}
 
       {isOpen && query.length >= 2 && (
-        <div className="absolute top-full -left-2 -right-2 sm:-left-2.5 sm:-right-2.5 mt-3 bg-white rounded-3xl border-2 border-slate-200 shadow-[0_8px_0_0_#cbd5e1] z-50 max-h-125 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+        <div className="absolute top-full -left-2 -right-2 sm:-left-2.5 sm:-right-2.5 mt-3 bg-white rounded-3xl border-2 border-slate-200 shadow-[0_12px_30px_rgba(0,0,0,0.25)] z-50 max-h-[70vh] sm:max-h-125 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
           
           {isLoading ? (
             <div className="p-10 text-center">
