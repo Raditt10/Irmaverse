@@ -430,7 +430,7 @@ export default function Home() {
           <div className="relative flex flex-col lg:grid lg:grid-cols-2 gap-6 sm:gap-8 items-center pt-4 sm:pt-8 max-w-7xl mx-auto w-full px-3 sm:px-6 lg:px-8">
             <div className="relative space-y-4 sm:space-y-6 z-10 w-full">
               <div className="inline-flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl bg-white/20 border-2 border-white/30 text-white text-[10px] sm:text-sm font-bold shadow-[4px_4px_0px_0px_rgba(0,0,0,0.1)] transform -rotate-1 hover:rotate-0 transition-all">
-                Official Website <span className="text-emerald-100 bg-emerald-600 px-1 rounded text-[10px] sm:text-sm">Irma</span>
+                Official Website <span className="text-emerald-100 bg-emerald-600 px-1 rounded text-[10px] sm:text-sm">Irma Al-Hikmah</span>
               </div>
 
               <div className="space-y-1 sm:space-y-2">
@@ -531,77 +531,85 @@ export default function Home() {
 
 
       {/* CARTOON GALLERY SECTION */}
-      <section id="galeri" className="py-14 sm:py-24 relative">
+      <section id="galeri" className="pt-8 sm:pt-14 pb-14 sm:pb-24 relative">
         <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
-          <div className="text-center mb-12 sm:mb-20 md:mb-24">
-
-            <h2 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-white mb-3 sm:mb-6 leading-tight drop-shadow-[3px_3px_0px_rgba(0,0,0,0.15)]">
-               <span className="bg-linear-to-r from-yellow-200 to-amber-300 bg-clip-text text-transparent" style={{ textShadow: "2px 2px 0px rgba(0,0,0,0.2)" }}>Kegiatan</span> Kami
-            </h2>
-            <p className="text-sm sm:text-lg md:text-xl text-white/80 max-w-3xl mx-auto leading-relaxed font-bold">
-               Lihat kegiatan IRMA yang penuh warna dan bersemangat! 🎉
-            </p>
-          </div>
 
           <div className="relative max-w-5xl mx-auto">
-            {/* Model 3 (Menunjuk ke Galeri) */}
-            <div className="absolute -top-20 sm:-top-32 md:-top-44 right-1 sm:right-4 md:right-8 z-20 pointer-events-none flex items-end">
-              <div className="absolute inset-0 bg-emerald-400/20 blur-[50px] rounded-full pointer-events-none" />
-              <img
-                src="/model_3.webp"
-                alt="Role Model Galeri IRMA"
-                className="relative h-28 xs:h-32 sm:h-48 md:h-60 lg:h-68 w-auto object-contain object-bottom hover:scale-105 origin-bottom transition-transform duration-500 pointer-events-auto"
-                style={{
-                  filter: "drop-shadow(4px 4px 0px #ffffff) drop-shadow(12px 12px 0px rgba(0,0,0,0.2))",
-                  WebkitMaskImage: "linear-gradient(to bottom, black 70%, transparent 95%)",
-                  maskImage: "linear-gradient(to bottom, black 70%, transparent 95%)"
-                }}
-              />
-            </div>
+            {/* Model 3 Showcase (Di Belakang Galeri, Pas di Bawah Tangan) */}
+            <div className="relative z-0 flex flex-col items-center justify-end -mb-[95px] xs:-mb-[115px] sm:-mb-[142px] md:-mb-[175px] lg:-mb-[208px] xl:-mb-[232px]">
+              {/* Radial ambient glow */}
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 sm:w-96 md:w-[500px] h-64 sm:h-96 md:h-[500px] bg-emerald-400/25 blur-[60px] sm:blur-[90px] rounded-full pointer-events-none" />
 
-            {/* Frame Kartun */}
-            <div className="relative aspect-video md:aspect-21/9 rounded-3xl sm:rounded-4xl border-4 sm:border-8 border-white/40 shadow-[6px_6px_0px_0px_rgba(0,0,0,0.15)] sm:shadow-[12px_12px_0px_0px_rgba(0,0,0,0.2)] bg-black/20 backdrop-blur-sm overflow-hidden transform hover:scale-[1.01] transition-transform duration-500 group">
-              {/* Slides */}
-              {galleryItems.map((item, index) => (
-                <div 
-                  key={index} 
-                  className={`absolute inset-0 w-full h-full transition-all duration-700 ease-in-out ${index === currentSlide ? 'opacity-100 scale-100' : 'opacity-0 scale-105'}`}
-                >
-                  <img src={item.src} alt={item.title} className="w-full h-full object-cover" />
-                  {/* TEXT OVERLAY */}
-                  <div className="absolute bottom-0 left-0 right-0 bg-linear-to-t from-black/90 via-black/50 to-transparent px-4 py-3 sm:p-6 md:p-10 text-white">
-                    <h3 className="text-sm sm:text-2xl md:text-3xl font-extrabold mb-0.5 sm:mb-2 text-yellow-300 drop-shadow-[2px_2px_0px_rgba(0,0,0,0.8)] leading-tight">{item.title}</h3>
-                    <p className="text-[10px] sm:text-sm md:text-lg text-white font-bold max-w-2xl drop-shadow-md line-clamp-1 sm:line-clamp-none">{item.description}</p>
-                  </div>
-                </div>
-              ))}
-
-              {/* Navigation Buttons */}
-              <button onClick={prevSlide} className="absolute left-1.5 sm:left-4 top-1/2 -translate-y-1/2 bg-white text-emerald-700 p-2 sm:p-4 rounded-xl sm:rounded-2xl border-b-3 sm:border-b-4 border-emerald-800 shadow-lg hover:bg-gray-100 active:border-b-0 active:translate-y-1 transition-all z-10">
-                <ChevronLeft className="h-4 w-4 sm:h-8 sm:w-8 stroke-[4px]" />
-              </button>
-              
-              <button onClick={nextSlide} className="absolute right-1.5 sm:right-4 top-1/2 -translate-y-1/2 bg-white text-emerald-700 p-2 sm:p-4 rounded-xl sm:rounded-2xl border-b-3 sm:border-b-4 border-emerald-800 shadow-lg hover:bg-gray-100 active:border-b-0 active:translate-y-1 transition-all z-10">
-                <ChevronRight className="h-4 w-4 sm:h-8 sm:w-8 stroke-[4px]" />
-              </button>
-            </div>
-
-            {/* Decoration Dots */}
-            <div className="flex justify-center gap-2 sm:gap-3 mt-5 sm:mt-8">
-              {galleryItems.map((_, index) => (
-                <button
-                  key={index}
-                  onClick={() => setCurrentSlide(index)}
-                  className={`h-3 sm:h-4 md:h-5 rounded-full transition-all duration-300 border-2 sm:border-[3px] border-white/40 shadow-sm ${
-                    currentSlide === index ? "w-8 sm:w-10 md:w-12 bg-yellow-400 scale-110" : "w-3 sm:w-4 md:w-5 bg-white/40 hover:bg-white/60"
-                  }`}
-                  aria-label={`Go to slide ${index + 1}`}
+              {/* Model 3 Wrapper */}
+              <div className="relative flex flex-col items-center">
+                <img
+                  src="/model_3.webp"
+                  alt="Role Model Galeri IRMA"
+                  className="relative h-60 xs:h-72 sm:h-88 md:h-[440px] lg:h-[520px] xl:h-[580px] w-auto object-contain object-bottom hover:scale-105 origin-bottom transition-transform duration-500 pointer-events-auto"
+                  style={{
+                    filter: "drop-shadow(5px 5px 0px #ffffff) drop-shadow(15px 15px 0px rgba(0,0,0,0.22))",
+                  }}
                 />
-              ))}
+              </div>
             </div>
-            
-            <div className="absolute -top-10 -left-10 w-24 h-24 bg-yellow-400 rounded-full blur-xl opacity-60 animate-bounce hidden sm:block"></div>
-            <div className="absolute -bottom-10 -right-10 w-36 h-36 bg-cyan-400 rounded-full blur-2xl opacity-60 animate-pulse delay-700 hidden sm:block"></div>
+
+            {/* Gallery Frame & Controls Container */}
+            <div className="relative">
+              {/* Frame Kartun */}
+              <div className="relative z-10 aspect-video md:aspect-21/9 rounded-3xl sm:rounded-4xl border-4 sm:border-8 border-white/40 shadow-[6px_6px_0px_0px_rgba(0,0,0,0.15)] sm:shadow-[12px_12px_0px_0px_rgba(0,0,0,0.2)] bg-emerald-950/80 backdrop-blur-sm overflow-hidden transform hover:scale-[1.01] transition-transform duration-500 group">
+                {/* Slides */}
+                {galleryItems.map((item, index) => (
+                  <div 
+                    key={index} 
+                    className={`absolute inset-0 w-full h-full transition-all duration-700 ease-in-out ${index === currentSlide ? 'opacity-100 scale-100' : 'opacity-0 scale-105'}`}
+                  >
+                    <img src={item.src} alt={item.title} className="w-full h-full object-cover" />
+                    {/* TEXT OVERLAY */}
+                    <div className="absolute bottom-0 left-0 right-0 bg-linear-to-t from-black/90 via-black/50 to-transparent px-4 py-3 sm:p-6 md:p-10 text-white">
+                      <h3 className="text-sm sm:text-2xl md:text-3xl font-extrabold mb-0.5 sm:mb-2 text-yellow-300 drop-shadow-[2px_2px_0px_rgba(0,0,0,0.8)] leading-tight">{item.title}</h3>
+                      <p className="text-[10px] sm:text-sm md:text-lg text-white font-bold max-w-2xl drop-shadow-md line-clamp-1 sm:line-clamp-none">{item.description}</p>
+                    </div>
+                  </div>
+                ))}
+
+                {/* Judul Kegiatan Kami di Bagian Atas Dalam Galeri (Tepat di bawah jari telunjuk model) */}
+                <div className="absolute top-0 left-0 right-0 z-20 flex flex-col items-center pt-3 sm:pt-5 md:pt-7 pb-8 sm:pb-12 bg-linear-to-b from-black/85 via-black/45 to-transparent pointer-events-none px-4 text-center">
+                  <h2 className="text-xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold text-white leading-tight drop-shadow-[2px_2px_0px_rgba(0,0,0,0.8)]">
+                    <span className="bg-linear-to-r from-yellow-200 to-amber-300 bg-clip-text text-transparent">Kegiatan</span> Kami
+                  </h2>
+                  <p className="text-[10px] sm:text-xs md:text-sm text-white/90 font-bold drop-shadow-md max-w-md mt-0.5 sm:mt-1">
+                    Lihat kegiatan IRMA yang penuh warna dan bersemangat! 
+                  </p>
+                </div>
+
+                {/* Navigation Buttons */}
+                <button onClick={prevSlide} className="absolute left-1.5 sm:left-4 top-1/2 -translate-y-1/2 bg-white text-emerald-700 p-2 sm:p-4 rounded-xl sm:rounded-2xl border-b-3 sm:border-b-4 border-emerald-800 shadow-lg hover:bg-gray-100 active:border-b-0 active:translate-y-1 transition-all z-20">
+                  <ChevronLeft className="h-4 w-4 sm:h-8 sm:w-8 stroke-[4px]" />
+                </button>
+                
+                <button onClick={nextSlide} className="absolute right-1.5 sm:right-4 top-1/2 -translate-y-1/2 bg-white text-emerald-700 p-2 sm:p-4 rounded-xl sm:rounded-2xl border-b-3 sm:border-b-4 border-emerald-800 shadow-lg hover:bg-gray-100 active:border-b-0 active:translate-y-1 transition-all z-20">
+                  <ChevronRight className="h-4 w-4 sm:h-8 sm:w-8 stroke-[4px]" />
+                </button>
+              </div>
+
+              {/* Decoration Dots */}
+              <div className="flex justify-center gap-2 sm:gap-3 mt-5 sm:mt-8 relative z-10">
+                {galleryItems.map((_, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setCurrentSlide(index)}
+                    className={`h-3 sm:h-4 md:h-5 rounded-full transition-all duration-300 border-2 sm:border-[3px] border-white/40 shadow-sm ${
+                      currentSlide === index ? "w-8 sm:w-10 md:w-12 bg-yellow-400 scale-110" : "w-3 sm:w-4 md:w-5 bg-white/40 hover:bg-white/60"
+                    }`}
+                    aria-label={`Go to slide ${index + 1}`}
+                  />
+                ))}
+              </div>
+              
+              {/* Corner Glows (Nempel ke Sudut Galeri) */}
+              <div className="absolute -top-6 -left-6 sm:-top-10 sm:-left-10 w-24 h-24 bg-yellow-400 rounded-full blur-xl opacity-60 animate-bounce hidden sm:block pointer-events-none z-0"></div>
+              <div className="absolute -bottom-6 -right-6 sm:-bottom-10 sm:-right-10 w-36 h-36 bg-cyan-400 rounded-full blur-2xl opacity-60 animate-pulse delay-700 hidden sm:block pointer-events-none z-0"></div>
+            </div>
           </div>
         </div>
       </section>
