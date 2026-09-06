@@ -682,7 +682,7 @@ const Auth = () => {
             </div>
 
             <div className="flex items-center gap-4 text-slate-400 font-bold text-sm mx-auto">
-              <span>© 2026 Syntax13</span>
+              <span>© 2026 Irma Al-Hikmah</span>
               <span className="w-1 h-1 bg-slate-300 rounded-full"></span>
               <a href="#" className="hover:text-teal-600 transition-colors">
                 Bantuan
