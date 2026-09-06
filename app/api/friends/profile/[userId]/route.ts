@@ -54,7 +54,7 @@ export async function GET(
       where: { userId },
       _avg: { score: true },
       _count: { id: true },
-    });
+    }); 
 
     // Ambil enrollment count (program + course)
     const [programEnrollCount, courseEnrollCount] = await Promise.all([

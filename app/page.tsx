@@ -457,28 +457,32 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Gambar Model Khusus Mobile (Menempel di Kanan) */}
-            <div className="absolute right-[-1rem] top-6 sm:top-10 flex lg:hidden justify-end pointer-events-none z-0">
-               <div className="absolute inset-0 bg-emerald-400/20 blur-[60px] rounded-full pointer-events-none" />
-               <img
-                src="/model.webp"
+            {/* Gambar Model Khusus Mobile (Menempel di Kanan Judul) */}
+            <div className="absolute right-[-1rem] sm:right-[-1.5rem] top-4 sm:top-8 flex lg:hidden justify-end pointer-events-none z-0">
+              <div className="absolute inset-0 bg-emerald-400/20 blur-[50px] rounded-full pointer-events-none" />
+              <img
+                src="/model_1.webp"
                 alt="Role model IRMA"
-                className="relative h-64 sm:h-80 w-auto object-contain opacity-80"
+                className="relative h-60 sm:h-76 w-auto object-contain opacity-90"
                 style={{ 
-                  filter: "drop-shadow(3px 3px 0px #ffffff) drop-shadow(10px 10px 0px rgba(0,0,0,0.2))" 
+                  filter: "drop-shadow(3px 3px 0px #ffffff) drop-shadow(10px 10px 0px rgba(0,0,0,0.2))",
+                  WebkitMaskImage: "linear-gradient(to bottom, black 70%, transparent 95%)",
+                  maskImage: "linear-gradient(to bottom, black 70%, transparent 95%)"
                 }} 
               />
             </div>
 
             {/* Gambar Model Desktop */}
-            <div className="relative mt-8 lg:mt-0 hidden lg:flex justify-center lg:justify-end z-10">
-               <div className="absolute inset-0 bg-emerald-400/20 blur-[80px] rounded-full pointer-events-none" />
+            <div className="relative mt-8 lg:mt-0 hidden lg:flex justify-center lg:justify-end items-end z-10 lg:translate-x-8 xl:translate-x-14 2xl:translate-x-20">
+               <div className="absolute inset-0 bg-emerald-400/25 blur-[90px] rounded-full pointer-events-none" />
                <img
-                src="/model.webp"
+                src="/model_1.webp"
                 alt="Role model IRMA"
-                className="relative lg:h-[600px] w-auto object-contain hover:scale-105 transition-transform duration-500"
+                className="relative lg:h-[620px] xl:h-[700px] 2xl:h-[760px] w-auto object-contain hover:scale-105 origin-bottom transition-transform duration-500"
                 style={{ 
-                  filter: "drop-shadow(5px 5px 0px #ffffff) drop-shadow(15px 15px 0px rgba(0,0,0,0.25))" 
+                  filter: "drop-shadow(6px 6px 0px #ffffff) drop-shadow(18px 18px 0px rgba(0,0,0,0.25))",
+                  WebkitMaskImage: "linear-gradient(to bottom, black 70%, transparent 95%)",
+                  maskImage: "linear-gradient(to bottom, black 70%, transparent 95%)"
                 }} 
               />
             </div>
@@ -529,7 +533,7 @@ export default function Home() {
       {/* CARTOON GALLERY SECTION */}
       <section id="galeri" className="py-14 sm:py-24 relative">
         <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
-          <div className="text-center mb-8 sm:mb-16">
+          <div className="text-center mb-12 sm:mb-20 md:mb-24">
 
             <h2 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-white mb-3 sm:mb-6 leading-tight drop-shadow-[3px_3px_0px_rgba(0,0,0,0.15)]">
                <span className="bg-linear-to-r from-yellow-200 to-amber-300 bg-clip-text text-transparent" style={{ textShadow: "2px 2px 0px rgba(0,0,0,0.2)" }}>Kegiatan</span> Kami
@@ -540,6 +544,21 @@ export default function Home() {
           </div>
 
           <div className="relative max-w-5xl mx-auto">
+            {/* Model 3 (Menunjuk ke Galeri) */}
+            <div className="absolute -top-20 sm:-top-32 md:-top-44 right-1 sm:right-4 md:right-8 z-20 pointer-events-none flex items-end">
+              <div className="absolute inset-0 bg-emerald-400/20 blur-[50px] rounded-full pointer-events-none" />
+              <img
+                src="/model_3.webp"
+                alt="Role Model Galeri IRMA"
+                className="relative h-28 xs:h-32 sm:h-48 md:h-60 lg:h-68 w-auto object-contain object-bottom hover:scale-105 origin-bottom transition-transform duration-500 pointer-events-auto"
+                style={{
+                  filter: "drop-shadow(4px 4px 0px #ffffff) drop-shadow(12px 12px 0px rgba(0,0,0,0.2))",
+                  WebkitMaskImage: "linear-gradient(to bottom, black 70%, transparent 95%)",
+                  maskImage: "linear-gradient(to bottom, black 70%, transparent 95%)"
+                }}
+              />
+            </div>
+
             {/* Frame Kartun */}
             <div className="relative aspect-video md:aspect-21/9 rounded-3xl sm:rounded-4xl border-4 sm:border-8 border-white/40 shadow-[6px_6px_0px_0px_rgba(0,0,0,0.15)] sm:shadow-[12px_12px_0px_0px_rgba(0,0,0,0.2)] bg-black/20 backdrop-blur-sm overflow-hidden transform hover:scale-[1.01] transition-transform duration-500 group">
               {/* Slides */}
@@ -588,46 +607,104 @@ export default function Home() {
       </section>
 
       {/* FAQ SECTION */}
-      <section id="faq" className="py-14 sm:py-24 relative">
-        <div className="max-w-4xl mx-auto px-3 sm:px-6 lg:px-8">
-          <div className="text-center mb-8 sm:mb-16">
+      <section id="faq" className="py-14 sm:py-24 relative overflow-hidden">
+        {/* Background ambient lighting */}
+        <div className="absolute top-1/4 left-5 w-72 h-72 bg-emerald-400/20 rounded-full blur-[100px] pointer-events-none" />
+        <div className="absolute bottom-10 right-10 w-96 h-96 bg-cyan-400/20 rounded-full blur-[120px] pointer-events-none" />
 
-            <h2 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-white mb-3 sm:mb-6 leading-tight drop-shadow-[3px_3px_0px_rgba(0,0,0,0.15)]">
-               FAQ <span className="bg-linear-to-r from-emerald-200 to-cyan-200 bg-clip-text text-transparent" style={{ textShadow: "2px 2px 0px rgba(0,0,0,0.2)" }}>Terkait</span>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          {/* Section Header */}
+          <div className="text-center mb-10 sm:mb-16">
+            <h2 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-white mb-3 sm:mb-4 leading-tight drop-shadow-[3px_3px_0px_rgba(0,0,0,0.15)]">
+               FAQ <span className="bg-linear-to-r from-yellow-200 via-emerald-100 to-cyan-200 bg-clip-text text-transparent" style={{ textShadow: "2px 2px 0px rgba(0,0,0,0.2)" }}>Terkait</span>
             </h2>
+            <p className="text-xs sm:text-base md:text-lg text-white/90 max-w-2xl mx-auto font-bold leading-relaxed drop-shadow-sm">
+              Semua hal yang sering kamu tanyakan seputar aktivitas dan penggunaan aplikasi IRMAVerse!
+            </p>
           </div>
 
-          <div className="space-y-3 sm:space-y-4">
-            {[
-              {
-                q: "Apa itu IrmaVerse?",
-                a: "IrmaVerse adalah platform digital khusus untuk mendukung seluruh kegiatan, informasi, dan komunikasi anggota IRMA secara terorganisir dan modern."
-              },
-              {
-                q: "Bagaimana cara mengakses fitur di IRMAVerse?",
-                a: "Klik tombol 'Login', lalu masuk menggunakan akun yang telah didaftarkan. Anda dapat menikmati fitur Presensi, Event, hingga Jadwal Kajian secara mudah."
-              },
-              {
-                q: "Apakah alumni bisa gabung ke IRMAVerse?",
-                a: "Saat ini fokus utama IRMAVerse adalah untuk anggota aktif. Namun, alumni dapat melihat galeri dan artikel seputar IRMA di bagian yang bersifat publik."
-              },
-              {
-                q: "Bagaimana jika ada kendala penggunaan?",
-                a: "Silakan kirimkan laporan Anda melalui form di bagian 'Kontak Kami' di bawah, tim kami akan segera membalas email Anda."
-              }
-            ].map((faq, i) => (
-              <div key={i} className="group p-4 sm:p-6 md:p-8 rounded-2xl sm:rounded-3xl bg-white/10 backdrop-blur-md border-[3px] border-white/20 hover:border-emerald-300 hover:bg-white/20 transition-all duration-300 shadow-[4px_4px_0px_0px_rgba(0,0,0,0.1)] sm:shadow-[8px_8px_0px_0px_rgba(0,0,0,0.15)]">
-                <h3 className="text-sm sm:text-lg md:text-xl font-bold text-white mb-2 sm:mb-3 group-hover:text-emerald-200 transition-colors duration-300 flex items-start gap-2 sm:gap-3">
-                  <span className="text-emerald-300 mt-0.5 shrink-0">
-                    <Zap className="h-4 w-4 sm:h-5 sm:w-5 stroke-[3px]" />
-                  </span>
-                  {faq.q}
-                </h3>
-                <p className="text-[11px] sm:text-sm md:text-base text-white/80 font-medium leading-relaxed ml-6 sm:ml-8">
-                  {faq.a}
-                </p>
+          {/* 2-Column Comic Grid: Left Questions, Right Model Showcase */}
+          <div className="relative flex flex-col items-start lg:grid lg:grid-cols-2 gap-2 sm:gap-4 lg:gap-8 lg:items-end">
+            {/* Left Column: Comic Bubble Questions */}
+            <div className="flex flex-col gap-1.5 xs:gap-2 sm:gap-2.5 lg:gap-3.5 w-[44%] xs:w-[45%] sm:w-[48%] max-w-[160px] xs:max-w-[175px] sm:max-w-[210px] lg:max-w-none lg:w-full z-10 relative items-start">
+              {[
+                {
+                  q: "Apa itu IrmaVerse?",
+                  a: "IrmaVerse adalah platform digital khusus untuk mendukung seluruh kegiatan, informasi, dan komunikasi anggota IRMA secara terorganisir dan modern.",
+                  rotation: "-rotate-1 sm:-rotate-2 hover:rotate-0",
+                  align: "self-start ml-0 mr-auto max-w-full lg:max-w-[480px]",
+                  tail: "left-3 sm:left-4 -bottom-1",
+                },
+                {
+                  q: "Bagaimana cara mengakses fitur di IRMAVerse?",
+                  a: "Klik tombol 'Login', lalu masuk menggunakan akun yang telah didaftarkan. Anda dapat menikmati fitur Presensi, Event, hingga Jadwal Kajian secara mudah.",
+                  rotation: "rotate-1 sm:rotate-2 hover:rotate-0",
+                  align: "self-start ml-0.5 sm:ml-2 lg:self-end lg:ml-auto lg:mr-0 lg:translate-x-4 max-w-full lg:max-w-[470px]",
+                  tail: "right-3 lg:right-6 -bottom-1",
+                },
+                {
+                  q: "Apakah alumni bisa gabung ke IRMAVerse?",
+                  a: "Saat ini fokus utama IRMAVerse adalah untuk anggota aktif. Namun, alumni dapat melihat galeri dan artikel seputar IRMA di bagian yang bersifat publik.",
+                  rotation: "-rotate-0.5 sm:-rotate-1 hover:rotate-0",
+                  align: "self-start ml-0 sm:ml-1 lg:-translate-x-2 max-w-full lg:max-w-[490px]",
+                  tail: "left-4 sm:left-6 -bottom-1",
+                },
+                {
+                  q: "Bagaimana jika ada kendala penggunaan?",
+                  a: "Silakan kirimkan laporan Anda melalui form di bagian 'Kontak Kami' di bawah, tim kami akan segera membalas email Anda.",
+                  rotation: "rotate-1 sm:rotate-1.5 hover:rotate-0",
+                  align: "self-start ml-0.5 sm:ml-2 lg:self-end lg:ml-auto lg:mr-0 lg:translate-x-2 max-w-full lg:max-w-[460px]",
+                  tail: "right-3 lg:right-5 -bottom-1",
+                }
+              ].map((faq, i) => (
+                <div
+                  key={i}
+                  className={`group relative bg-white rounded-md sm:rounded-xl lg:rounded-2xl p-1.5 xs:p-2 sm:p-2.5 lg:p-3.5 border-[1.5px] sm:border-2 lg:border-[2.5px] border-emerald-500 shadow-[1.5px_1.5px_0px_0px_#065f46] hover:shadow-[3px_3px_0px_0px_#064e3b] hover:-translate-y-0.5 transition-all duration-300 w-full ${faq.rotation} ${faq.align}`}
+                >
+                  {/* Comic Speech Bubble Pointer Tail */}
+                  <div className={`absolute ${faq.tail} w-1.5 h-1.5 sm:w-2.5 sm:h-2.5 bg-white border-b-[1.5px] sm:border-b-2 border-r-[1.5px] sm:border-r-2 border-emerald-500 rotate-45 z-10`} />
+
+                  {/* Question Text in Comic Bubble */}
+                  <h3 className="text-[8px] xs:text-[8.5px] sm:text-[10.5px] lg:text-[14px] font-black text-slate-800 leading-tight sm:leading-snug group-hover:text-emerald-700 transition-colors flex items-start gap-1 sm:gap-1.5">
+                    <span className="text-emerald-600 font-black text-[8px] xs:text-[8.5px] sm:text-[10.5px] lg:text-sm shrink-0">Q:</span>
+                    <span>{faq.q}</span>
+                  </h3>
+
+                  {/* Answer Bubble Box */}
+                  <div className="mt-0.5 sm:mt-1 bg-emerald-50/90 rounded-xs xs:rounded-sm sm:rounded-lg lg:rounded-xl p-1 xs:p-1.5 sm:p-2 lg:p-2.5 border border-emerald-200/90 text-slate-700 shadow-inner">
+                    <div className="flex items-start gap-1 sm:gap-1.5">
+                      <span className="shrink-0 mt-0.5 inline-flex items-center justify-center w-2 h-2 xs:w-2.5 xs:h-2.5 sm:w-3.5 sm:h-3.5 rounded-full bg-emerald-600 text-white font-black text-[4.5px] xs:text-[5.5px] sm:text-[7px] shadow-xs">
+                        A
+                      </span>
+                      <p className="text-[6.5px] xs:text-[7px] sm:text-[8.5px] lg:text-[11.5px] font-bold leading-tight sm:leading-relaxed text-slate-700">
+                        {faq.a}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Right Column: Model 2 Showcase (On mobile: shifted further right; On desktop: in column 2) */}
+            <div className="absolute right-[-3.5rem] xs:right-[-4.5rem] sm:right-[-3rem] bottom-0 lg:relative lg:right-auto lg:bottom-auto flex justify-end items-end pointer-events-none lg:pointer-events-auto z-0 lg:z-10 lg:translate-x-8 xl:translate-x-14 2xl:translate-x-20">
+              {/* Radial ambient glow behind model */}
+              <div className="absolute bottom-6 right-0 lg:right-6 w-52 sm:w-80 lg:w-96 h-52 sm:h-80 lg:h-96 bg-emerald-400/20 blur-[70px] rounded-full pointer-events-none" />
+              <div className="absolute bottom-16 right-0 w-40 sm:w-64 lg:w-72 h-40 sm:h-64 lg:h-72 bg-yellow-300/15 blur-[60px] rounded-full pointer-events-none" />
+
+              {/* Model 2 Cropped Image */}
+              <div className="relative flex justify-center lg:justify-end items-end w-full">
+                <img
+                  src="/model_2.webp"
+                  alt="Role Model FAQ IRMA"
+                  className="relative h-[230px] xs:h-[255px] sm:h-[310px] lg:h-[620px] xl:h-[700px] 2xl:h-[760px] w-auto max-w-none lg:max-w-full object-contain object-bottom hover:scale-105 origin-bottom transition-transform duration-500 pointer-events-auto"
+                  style={{
+                    filter: "drop-shadow(4px 4px 0px #ffffff) drop-shadow(12px 12px 0px rgba(0,0,0,0.2))",
+                    WebkitMaskImage: "linear-gradient(to bottom, black 85%, transparent 100%)",
+                    maskImage: "linear-gradient(to bottom, black 85%, transparent 100%)"
+                  }}
+                />
               </div>
-            ))}
+            </div>
           </div>
         </div>
       </section>
@@ -663,7 +740,7 @@ export default function Home() {
           <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center px-2 sm:px-4">
             <Link href="/auth?mode=signup" className="w-full sm:w-auto">
               <button className="w-full sm:w-auto px-6 sm:px-12 py-4 sm:py-6 text-sm sm:text-lg group font-extrabold bg-white text-emerald-800 rounded-2xl border-b-6 sm:border-b-8 border-emerald-900 active:border-b-0 active:translate-y-2 transition-all duration-150 flex items-center justify-center gap-2 sm:gap-3 hover:brightness-105 shadow-2xl">
-                <span>Daftar Sekarang Gratis!</span>
+                <span>Daftar Sekarang!</span>
                 <ArrowRight className="h-5 w-5 sm:h-6 sm:w-6 stroke-[3px] group-hover:translate-x-2 transition-transform duration-300" />
               </button>
             </Link>
@@ -751,7 +828,7 @@ export default function Home() {
             <div className="flex-1 min-w-[200px]">
               <h3 className="font-bold text-slate-800 text-lg mb-4 sm:mb-6">Contact Us</h3>
               <div className="space-y-3 text-sm text-slate-600 font-medium">
-                <p className="leading-relaxed">Jl. SMK Negeri 13 Bandung, Kota Bandung, Jawa Barat</p>
+                <p className="leading-relaxed">Masjid Al-hikmah, Jl. Soekarno-Hatta KM. 10, Jatisari, Kecamatan Buahbatu, Kota Bandung, Jawa Barat 40286</p>
                 <p className="flex items-center gap-2">
                   <span className="text-emerald-500 font-semibold">Email:</span> 1CtJ3@example.com
                 </p>

@@ -49,7 +49,6 @@ import {
 } from "@/components/ui/DropDown";
 import PageBanner from "@/components/ui/PageBanner";
 
-// ... (INTERFACES tetap sama) ...
 interface Instructor {
   id: string;
   name: string;
@@ -753,9 +752,6 @@ const ChatPage = () => {
     }
   };
 
-
-
-  // --- RENDER ---
 
   if (status === "loading" || loading) {
     return (

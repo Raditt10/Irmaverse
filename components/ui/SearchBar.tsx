@@ -336,7 +336,7 @@ export default function SearchBar({
       )}
 
       {isOpen && query.length >= 2 && (
-        <div className="absolute top-full left-0 right-0 mt-3 bg-white rounded-3xl border-2 border-slate-200 shadow-[0_8px_0_0_#e2e8f0] z-50 max-h-125 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+        <div className="absolute top-full -left-2 -right-2 sm:-left-2.5 sm:-right-2.5 mt-3 bg-white rounded-3xl border-2 border-slate-200 shadow-[0_8px_0_0_#cbd5e1] z-50 max-h-125 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
           
           {isLoading ? (
             <div className="p-10 text-center">
