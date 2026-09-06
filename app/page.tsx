@@ -866,10 +866,10 @@ export default function Home() {
               <div className="space-y-3 text-sm text-slate-600 font-medium">
                 <p className="leading-relaxed">Masjid Al-hikmah, Jl. Soekarno-Hatta KM. 10, Jatisari, Kecamatan Buahbatu, Kota Bandung, Jawa Barat 40286</p>
                 <p className="flex items-center gap-2">
-                  <span className="text-emerald-500 font-semibold">Email:</span> 1CtJ3@example.com
+                  <span className="text-emerald-500 font-semibold">Email:</span> irma-alhikmah@gmail.com
                 </p>
                 <p className="flex items-center gap-2">
-                  <span className="text-emerald-500 font-semibold">Telepon:</span> 0812-3456-7890
+                  <span className="text-emerald-500 font-semibold">Telepon:</span> +62 896-5263-5410 (Kang Hafidz)
                 </p>
               </div>
             </div>
