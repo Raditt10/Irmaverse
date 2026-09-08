@@ -4,6 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { writeFile, mkdir } from "fs/promises";
 import path from "path";
 import { existsSync } from "fs";
+import { emitAvatarUpdate } from "@/lib/socket-emit";
 
 /**
  * POST /api/users/avatar
@@ -96,6 +97,9 @@ export async function POST(request: NextRequest) {
         createdAt: true,
       },
     });
+
+    // Broadcast real-time avatar update via Socket.IO
+    await emitAvatarUpdate(user.id, avatarUrl);
 
     return NextResponse.json({
       user: updatedUser,

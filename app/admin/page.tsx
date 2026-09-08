@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import SafeImage from "@/components/ui/SafeImage";
 import {
   Users,
   BookOpen,
@@ -205,44 +206,46 @@ export default function AdminDashboard() {
                 </div>
                 
                   {stats.recentMaterials && stats.recentMaterials.length > 0 ? (
-                    <div className="bg-white rounded-[2.5rem] border-2 border-slate-100 p-6 space-y-4 shadow-sm">
+                    <div className="bg-white rounded-2xl sm:rounded-3xl md:rounded-[2.5rem] border border-slate-100 sm:border-2 p-3.5 sm:p-5 md:p-6 space-y-3 sm:space-y-4 shadow-sm">
                       {stats.recentMaterials.map((material) => (
-                        <div key={material.id} className="flex items-center justify-between p-4 rounded-3xl bg-slate-50 border-2 border-dashed border-slate-200 hover:bg-white transition-all group">
-                            <div className="flex items-center gap-4">
-                                <div className="w-14 h-14 rounded-2xl bg-emerald-50 border-2 border-emerald-100 flex items-center justify-center overflow-hidden group-hover:scale-105 transition-transform shadow-sm shrink-0">
-                                    {material.thumbnailUrl ? (
-                                      <img
-                                        src={material.thumbnailUrl}
-                                        alt={material.title}
-                                        className="w-full h-full object-cover"
-                                      />
-                                    ) : (
-                                      <div className="w-full h-full bg-emerald-100 flex items-center justify-center text-emerald-600 font-black text-xl">
-                                        {material.title.charAt(0)}
-                                      </div>
-                                    )}
+                        <Link 
+                          key={material.id} 
+                          href={`/materials/${material.id}`}
+                          className="flex items-center justify-between gap-3 p-3 sm:p-4 rounded-xl sm:rounded-2xl md:rounded-3xl bg-slate-50/70 border border-slate-200/80 hover:border-emerald-300 hover:bg-white transition-all group"
+                        >
+                            <div className="flex items-center gap-2.5 sm:gap-4 min-w-0 flex-1">
+                                <div className="w-11 h-11 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl bg-emerald-50 border border-emerald-100/80 sm:border-2 sm:border-emerald-100 flex items-center justify-center overflow-hidden group-hover:scale-105 transition-transform shadow-sm shrink-0">
+                                    <SafeImage
+                                      src={material.thumbnailUrl}
+                                      alt={material.title}
+                                      fallbackType="thumbnail"
+                                      contentType="kajian"
+                                      fallbackName={material.title}
+                                      className="w-full h-full object-cover"
+                                      fallbackClassName="w-full h-full bg-emerald-100 flex items-center justify-center text-emerald-600 font-black text-base sm:text-xl"
+                                    />
                                 </div>
-                                <div className="min-w-0">
-                                    <h3 className="font-black text-slate-700 group-hover:text-emerald-600 transition-colors truncate uppercase tracking-tight">{material.title}</h3>
-                                    <p className="text-xs font-bold text-slate-400 uppercase tracking-widest truncate">Oleh: {material.instructor}</p>
+                                <div className="min-w-0 flex-1">
+                                    <h3 className="font-black text-xs sm:text-sm md:text-base text-slate-700 group-hover:text-emerald-600 transition-colors truncate uppercase tracking-tight">{material.title}</h3>
+                                    <p className="text-[10px] sm:text-xs font-bold text-slate-400 uppercase tracking-wider truncate mt-0.5">Oleh: {material.instructor}</p>
                                 </div>
                             </div>
                             <div className="text-right shrink-0">
-                                <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase border ${
+                                <span className={`inline-block px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full text-[9px] sm:text-[10px] font-black uppercase border whitespace-nowrap shadow-xs ${
                                   material.isCompleted 
-                                  ? 'bg-emerald-50 text-emerald-600 border-emerald-100' 
-                                  : 'bg-amber-50 text-amber-600 border-amber-100'
+                                  ? 'bg-emerald-50 text-emerald-600 border-emerald-200/80' 
+                                  : 'bg-amber-50 text-amber-600 border-amber-200/80'
                                 }`}>
                                     {material.isCompleted ? 'Tuntas' : 'Belum Tuntas'}
                                 </span>
-                                <p className="text-[10px] font-bold text-slate-400 mt-1 uppercase tracking-tighter">
+                                <p className="text-[9px] sm:text-[10px] font-bold text-slate-400 mt-1 uppercase tracking-tighter whitespace-nowrap">
                                   {new Date(material.createdAt).toLocaleDateString('id-ID', {
                                     day: '2-digit',
                                     month: 'short'
                                   })}
                                 </p>
                             </div>
-                        </div>
+                        </Link>
                       ))}
                     </div>
                   ) : (

@@ -10,6 +10,7 @@ import CartoonConfirmDialog from "@/components/ui/ConfirmDialog"; // Import Conf
 import Loading from "@/components/ui/Loading";
 import ButtonEdit from "@/components/ui/ButtonEdit";
 import DeleteButton from "@/components/ui/DeleteButton";
+import SafeImage from "@/components/ui/SafeImage";
 import {
   Calendar,
   MapPin,
@@ -317,14 +318,15 @@ const MaterialDetail = () => {
             <div className="relative bg-[#334155] rounded-[40px] md:rounded-[60px] border-4 border-slate-200 shadow-[0_12px_0_0_#cbd5e1] overflow-hidden min-h-[300px] md:min-h-[400px] flex flex-col justify-end p-8 md:p-12 group">
               {/* Image with Gradient Overlay */}
               <div className="absolute inset-0">
-                <img
-                  src={
-                    material.thumbnailUrl || "https://picsum.photos/1200/600"
-                  }
+                <SafeImage
+                  src={material.thumbnailUrl}
                   alt={material.title}
+                  fallbackType="thumbnail"
+                  contentType="kajian"
+                  fallbackName={material.title}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 opacity-40 brightness-50"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#1e293b] via-[#334155]/60 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#1e293b] via-[#334155]/60 to-transparent pointer-events-none" />
               </div>
 
               <div className="relative z-10 w-full">
@@ -351,20 +353,20 @@ const MaterialDetail = () => {
               {/* LEFT COLUMN (Details) */}
               <div className="lg:col-span-2 space-y-8">
                 {/* Quick Stats Tiles */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  {/* Tanggal */}
-                  <div className="bg-white p-4 rounded-3xl border-2 border-slate-200 shadow-sm flex items-center gap-4 hover:-translate-y-1 transition-transform">
-                    <div className="w-12 h-12 shrink-0 rounded-full bg-emerald-50 flex items-center justify-center border-2 border-emerald-100">
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
+                  {/* Tanggal - Persegi di Mobile */}
+                  <div className="bg-white p-3.5 sm:p-4 rounded-2xl sm:rounded-3xl border-2 border-slate-200 shadow-sm flex flex-col justify-between min-h-[115px] md:min-h-0 md:flex-row md:items-center md:gap-4 hover:-translate-y-1 transition-transform">
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 shrink-0 rounded-2xl sm:rounded-full bg-emerald-50 flex items-center justify-center border-2 border-emerald-100">
                       <Calendar
-                        className="h-6 w-6 text-emerald-500"
+                        className="h-5 w-5 sm:h-6 sm:w-6 text-emerald-500"
                         strokeWidth={2.5}
                       />
                     </div>
-                    <div className="flex flex-col flex-1 overflow-hidden">
+                    <div className="flex flex-col flex-1 overflow-hidden min-w-0 mt-2 md:mt-0">
                       <span className="text-[10px] sm:text-xs text-slate-400 font-bold uppercase tracking-wider mb-0.5">
                         Tanggal
                       </span>
-                      <span className="text-slate-800 font-black text-sm md:text-base truncate">
+                      <span className="text-slate-800 font-black text-xs sm:text-sm md:text-base truncate leading-tight">
                         {new Date(material.date).toLocaleDateString("id-ID", {
                           day: "numeric",
                           month: "short",
@@ -374,37 +376,37 @@ const MaterialDetail = () => {
                     </div>
                   </div>
 
-                  {/* Waktu */}
-                  <div className="bg-white p-4 rounded-3xl border-2 border-slate-200 shadow-sm flex items-center gap-4 hover:-translate-y-1 transition-transform">
-                    <div className="w-12 h-12 shrink-0 rounded-full bg-emerald-50 flex items-center justify-center border-2 border-emerald-100">
+                  {/* Waktu - Persegi di Mobile */}
+                  <div className="bg-white p-3.5 sm:p-4 rounded-2xl sm:rounded-3xl border-2 border-slate-200 shadow-sm flex flex-col justify-between min-h-[115px] md:min-h-0 md:flex-row md:items-center md:gap-4 hover:-translate-y-1 transition-transform">
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 shrink-0 rounded-2xl sm:rounded-full bg-emerald-50 flex items-center justify-center border-2 border-emerald-100">
                       <Clock
-                        className="h-6 w-6 text-emerald-500"
+                        className="h-5 w-5 sm:h-6 sm:w-6 text-emerald-500"
                         strokeWidth={2.5}
                       />
                     </div>
-                    <div className="flex flex-col flex-1 overflow-hidden">
+                    <div className="flex flex-col flex-1 overflow-hidden min-w-0 mt-2 md:mt-0">
                       <span className="text-[10px] sm:text-xs text-slate-400 font-bold uppercase tracking-wider mb-0.5">
                         Waktu
                       </span>
-                      <span className="text-slate-800 font-black text-sm md:text-base truncate">
+                      <span className="text-slate-800 font-black text-xs sm:text-sm md:text-base truncate leading-tight">
                         {material.startedAt} WIB
                       </span>
                     </div>
                   </div>
 
-                  {/* Lokasi */}
-                  <div className="bg-white p-4 rounded-3xl border-2 border-slate-200 shadow-sm flex items-center gap-4 hover:-translate-y-1 transition-transform">
-                    <div className="w-12 h-12 shrink-0 rounded-full bg-emerald-50 flex items-center justify-center border-2 border-emerald-100">
+                  {/* Lokasi - Full width di baris kedua Mobile */}
+                  <div className="col-span-2 md:col-span-1 bg-white p-3.5 sm:p-4 rounded-2xl sm:rounded-3xl border-2 border-slate-200 shadow-sm flex items-center gap-3.5 sm:gap-4 hover:-translate-y-1 transition-transform">
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 shrink-0 rounded-2xl sm:rounded-full bg-emerald-50 flex items-center justify-center border-2 border-emerald-100">
                       <MapPin
-                        className="h-6 w-6 text-emerald-500"
+                        className="h-5 w-5 sm:h-6 sm:w-6 text-emerald-500"
                         strokeWidth={2.5}
                       />
                     </div>
-                    <div className="flex flex-col flex-1 overflow-hidden">
+                    <div className="flex flex-col flex-1 overflow-hidden min-w-0">
                       <span className="text-[10px] sm:text-xs text-slate-400 font-bold uppercase tracking-wider mb-0.5">
                         Lokasi
                       </span>
-                      <span className="text-slate-800 font-black text-sm md:text-base truncate">
+                      <span className="text-slate-800 font-black text-xs sm:text-sm md:text-base truncate">
                         {material.location}
                       </span>
                     </div>
@@ -412,20 +414,20 @@ const MaterialDetail = () => {
                 </div>
 
                 {/* Deskripsi Lengkap */}
-                <div className="bg-white p-8 md:p-10 rounded-[45px] border-4 border-slate-200 shadow-[0_10px_0_0_#cbd5e1]">
-                  <div className="flex items-center gap-5 mb-8">
-                    <div className="w-14 h-14 bg-emerald-100 rounded-2xl border-4 border-emerald-200 flex items-center justify-center">
+                <div className="bg-white p-5 sm:p-8 md:p-10 rounded-3xl md:rounded-[45px] border-2 sm:border-4 border-slate-200 shadow-[0_6px_0_0_#cbd5e1] md:shadow-[0_10px_0_0_#cbd5e1]">
+                  <div className="flex items-center gap-3.5 sm:gap-5 mb-6 md:mb-8">
+                    <div className="w-11 h-11 sm:w-14 sm:h-14 bg-emerald-100 rounded-xl sm:rounded-2xl border-2 sm:border-4 border-emerald-200 flex items-center justify-center shrink-0">
                       <Info
-                        className="h-7 w-7 text-emerald-500"
+                        className="h-6 w-6 sm:h-7 sm:w-7 text-emerald-500"
                         strokeWidth={3}
                       />
                     </div>
-                    <h2 className="text-3xl font-black text-slate-800 tracking-tight">
+                    <h2 className="text-xl sm:text-2xl md:text-3xl font-black text-slate-800 tracking-tight">
                       Deskripsi Kajian
                     </h2>
                   </div>
 
-                  <p className="text-slate-600 font-bold leading-relaxed mb-8 whitespace-pre-line text-lg wrap-break-word">
+                  <p className="text-slate-600 font-bold leading-relaxed mb-6 md:mb-8 whitespace-pre-line text-sm sm:text-base md:text-lg wrap-break-word">
                     {material.description}
                   </p>
 
@@ -585,17 +587,14 @@ const MaterialDetail = () => {
                 <div className="bg-white rounded-[45px] border-4 border-slate-200 shadow-[0_10px_0_0_#cbd5e1] overflow-hidden p-8 flex flex-col items-center">
                   <div className="relative mb-6">
                     <div className="w-32 h-32 bg-teal-500 rounded-full border-4 border-white shadow-xl overflow-hidden">
-                      {material.instructorAvatar ? (
-                        <img
-                          src={material.instructorAvatar}
-                          alt={material.instructor}
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center text-white">
-                          <Contact className="h-16 w-16" strokeWidth={2.5} />
-                        </div>
-                      )}
+                      <SafeImage
+                        src={material.instructorAvatar}
+                        alt={material.instructor}
+                        fallbackType="avatar"
+                        fallbackName={material.instructor}
+                        className="w-full h-full object-cover"
+                        fallbackClassName="w-full h-full bg-teal-500 text-white text-4xl font-black flex items-center justify-center"
+                      />
                     </div>
                   </div>
 
@@ -691,19 +690,14 @@ const MaterialDetail = () => {
                               className="flex items-center justify-between px-3 py-2.5 rounded-xl bg-slate-50 border border-slate-100 hover:bg-white transition-colors"
                             >
                               <div className="flex items-center gap-2.5 min-w-0">
-                                {inv.avatar ? (
-                                  <img
-                                    src={inv.avatar}
-                                    alt={inv.name || inv.email}
-                                    className="w-8 h-8 rounded-full object-cover border-2 border-slate-200"
-                                  />
-                                ) : (
-                                  <span className="w-8 h-8 flex items-center justify-center bg-slate-200 rounded-full text-slate-500 text-xs font-bold">
-                                    {(inv.name || inv.email)
-                                      .charAt(0)
-                                      .toUpperCase()}
-                                  </span>
-                                )}
+                                <SafeImage
+                                  src={inv.avatar}
+                                  alt={inv.name || inv.email}
+                                  fallbackType="avatar"
+                                  fallbackName={inv.name || inv.email}
+                                  className="w-8 h-8 rounded-full object-cover border-2 border-slate-200"
+                                  fallbackClassName="w-8 h-8 rounded-full border-2 border-slate-200 text-xs font-bold bg-slate-200 text-slate-600 flex items-center justify-center shrink-0"
+                                />
                                 <div className="min-w-0">
                                   <p className="text-xs font-bold text-slate-700 truncate">
                                     {inv.name || inv.email}

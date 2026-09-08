@@ -32,6 +32,8 @@ import {
   Globe,
   Link,
   FileText,
+  Check,
+  UserCheck,
   CheckSquare,
   Square,
   Layers,
@@ -96,6 +98,7 @@ const CreateMaterial = () => {
   const [showSearchResults, setShowSearchResults] = useState(false);
   const [showAllUsersModal, setShowAllUsersModal] = useState(false);
   const [searchModalInput, setSearchModalInput] = useState("");
+  const [modalFilter, setModalFilter] = useState<"all" | "selected">("all");
 
   // Helper Toast
   const showToast = (message: string, type: "success" | "error") => {
@@ -418,7 +421,7 @@ const CreateMaterial = () => {
             >
               {/* --- KOLOM KIRI: FORM UTAMA --- */}
               <div className="lg:col-span-2 space-y-6 lg:space-y-8">
-                <div className="bg-white p-5 lg:p-8 rounded-3xl lg:rounded-[2.5rem] border-2 border-slate-200 shadow-[0_4px_0_0_#cbd5e1] lg:shadow-[0_8px_0_0_#cbd5e1]">
+                <div className="bg-white p-4 sm:p-6 lg:p-8 rounded-2xl sm:rounded-3xl lg:rounded-[2.5rem] border-2 border-slate-200 shadow-[0_4px_0_0_#cbd5e1] lg:shadow-[0_8px_0_0_#cbd5e1]">
                   <h2 className="text-lg lg:text-xl font-black text-slate-700 mb-4 lg:mb-6 flex items-center gap-2">
                     <Type className="h-5 w-5 lg:h-6 lg:w-6 text-emerald-500" />{" "}
                     Informasi Dasar
@@ -844,18 +847,20 @@ const CreateMaterial = () => {
                       </div>
 
                       {/* --- REKAPAN / RINGKASAN MATERI SECTION --- */}
-                      <div className="pt-6 border-t-2 border-slate-100">
-                        <div className="flex items-center justify-between mb-4">
-                          <h3 className="text-sm font-bold text-slate-700 ml-1 flex items-center gap-2">
-                            <FileText className="h-4 w-4 text-emerald-500" />{" "}
-                            Rekapan Materi
-                            <span className="text-[11px] text-slate-400 font-medium ml-1">
-                              (Disarankan)
+                      <div className="pt-5 sm:pt-6 border-t-2 border-slate-100">
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+                          <div className="flex items-center gap-2">
+                            <h3 className="text-sm font-bold text-slate-700 flex items-center gap-2 whitespace-nowrap">
+                              <FileText className="h-4 w-4 text-emerald-500 shrink-0" />{" "}
+                              <span>Rekapan Materi</span>
+                            </h3>
+                            <span className="text-[10px] sm:text-[11px] text-slate-400 font-semibold bg-slate-100 px-2 py-0.5 rounded-md border border-slate-200/60 whitespace-nowrap shrink-0">
+                              Disarankan
                             </span>
-                          </h3>
+                          </div>
 
                           {/* Toggle Switch */}
-                          <div className="flex bg-slate-100 p-1 rounded-xl border border-slate-200">
+                          <div className="flex bg-slate-100/90 p-1 rounded-xl border border-slate-200 self-start sm:self-auto shrink-0">
                             <button
                               type="button"
                               onClick={() =>
@@ -864,14 +869,14 @@ const CreateMaterial = () => {
                                   materialType: "editor",
                                 }))
                               }
-                              className={`px-3 py-1.5 rounded-lg text-xs font-black transition-all flex items-center gap-1.5 ${
+                              className={`px-3 py-1.5 rounded-lg text-xs font-black transition-all flex items-center gap-1.5 whitespace-nowrap ${
                                 formData.materialType === "editor"
                                   ? "bg-white text-emerald-600 shadow-sm border border-slate-100"
                                   : "text-slate-400 hover:text-slate-600"
                               }`}
                             >
-                              <FileEdit className="h-3.5 w-3.5" />
-                              Teks
+                              <FileEdit className="h-3.5 w-3.5 shrink-0" />
+                              <span>Teks</span>
                             </button>
                             <button
                               type="button"
@@ -881,14 +886,14 @@ const CreateMaterial = () => {
                                   materialType: "link",
                                 }))
                               }
-                              className={`px-3 py-1.5 rounded-lg text-xs font-black transition-all flex items-center gap-1.5 ${
+                              className={`px-3 py-1.5 rounded-lg text-xs font-black transition-all flex items-center gap-1.5 whitespace-nowrap ${
                                 formData.materialType === "link"
                                   ? "bg-white text-indigo-600 shadow-sm border border-slate-100"
                                   : "text-slate-400 hover:text-slate-600"
                               }`}
                             >
-                              <Link className="h-3.5 w-3.5" />
-                              Drive Link
+                              <Link className="h-3.5 w-3.5 shrink-0" />
+                              <span>Drive Link</span>
                             </button>
                           </div>
                         </div>
@@ -963,7 +968,7 @@ const CreateMaterial = () => {
                 </div>
 
                 {/* Card Waktu & Tempat */}
-                <div className="bg-white p-5 lg:p-8 rounded-3xl lg:rounded-[2.5rem] border-2 border-slate-200 shadow-[0_4px_0_0_#cbd5e1] lg:shadow-[0_8px_0_0_#cbd5e1]">
+                <div className="bg-white p-4 sm:p-6 lg:p-8 rounded-2xl sm:rounded-3xl lg:rounded-[2.5rem] border-2 border-slate-200 shadow-[0_4px_0_0_#cbd5e1] lg:shadow-[0_8px_0_0_#cbd5e1]">
                   <h2 className="text-lg lg:text-xl font-black text-slate-700 mb-4 lg:mb-6 flex items-center gap-2">
                     <Calendar className="h-5 w-5 lg:h-6 lg:w-6 text-emerald-500" />{" "}
                     Teknis Pelaksanaan
@@ -1005,7 +1010,7 @@ const CreateMaterial = () => {
               {/* --- KOLOM KANAN: MEDIA & INVITE --- */}
               <div className="space-y-6 lg:space-y-8">
                 {/* Upload Thumbnail */}
-                <div className="bg-white p-5 lg:p-6 rounded-3xl lg:rounded-[2.5rem] border-2 border-slate-200 shadow-[0_4px_0_0_#cbd5e1] lg:shadow-[0_8px_0_0_#cbd5e1] text-center">
+                <div className="bg-white p-4 sm:p-6 rounded-2xl sm:rounded-3xl lg:rounded-[2.5rem] border-2 border-slate-200 shadow-[0_4px_0_0_#cbd5e1] lg:shadow-[0_8px_0_0_#cbd5e1] text-center">
                   <label className="block text-xs lg:text-sm font-bold text-slate-600 mb-3 lg:mb-4">
                     Thumbnail Kajian <span className="text-red-500 ml-1 font-bold">*</span>
                   </label>
@@ -1014,6 +1019,7 @@ const CreateMaterial = () => {
                       type="file"
                       accept="image/*"
                       onChange={handleImageUpload}
+                      disabled={uploading}
                       className="hidden"
                       id="upload-thumb"
                     />
@@ -1041,15 +1047,23 @@ const CreateMaterial = () => {
                     ) : (
                       <label
                         htmlFor="upload-thumb"
-                        className="flex flex-col items-center justify-center w-full h-40 lg:h-48 rounded-2xl lg:rounded-3xl border-2 border-dashed border-slate-300 bg-slate-50 hover:bg-teal-50 hover:border-teal-400 transition-all cursor-pointer"
+                        className={`flex flex-col items-center justify-center w-full h-40 lg:h-48 rounded-2xl lg:rounded-3xl border-2 border-dashed border-slate-300 bg-slate-50 hover:border-teal-400 hover:bg-teal-50 transition-all cursor-pointer ${
+                          uploading ? "opacity-50 pointer-events-none" : ""
+                        }`}
                       >
                         {uploading ? (
-                          <Sparkles className="w-6 h-6 lg:w-8 lg:h-8 text-teal-400 animate-spin" />
+                          <svg className="animate-spin -ml-1 mr-3 h-6 w-6 lg:h-8 lg:w-8 text-teal-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                          </svg>
                         ) : (
                           <>
-                            <Upload className="w-6 h-6 lg:w-8 lg:h-8 text-slate-400 mb-2 group-hover:text-teal-500" />
-                            <span className="text-xs lg:text-sm font-bold text-slate-400">
-                              Klik untuk Upload
+                            <Upload className="w-6 h-6 lg:w-8 lg:h-8 text-emerald-500 mb-2 group-hover:text-emerald-600 transition-colors" />
+                            <span className="text-xs lg:text-sm font-bold text-slate-400 group-hover:text-teal-500 transition-colors">
+                              Klik untuk Upload Thumbnail
+                            </span>
+                            <span className="text-[10px] sm:text-xs text-slate-400 font-medium mt-1">
+                              JPG, PNG, WebP (Max 5MB)
                             </span>
                           </>
                         )}
@@ -1059,17 +1073,27 @@ const CreateMaterial = () => {
                 </div>
 
                 {/* --- INVITING SECTION --- */}
-                <div className="bg-white p-5 lg:p-6 rounded-3xl lg:rounded-[2.5rem] border-2 border-slate-200 shadow-[0_4px_0_0_#cbd5e1] lg:shadow-[0_8px_0_0_#cbd5e1]">
-                  <div className="flex items-center justify-between mb-4">
-                    <h2 className="text-lg font-black text-slate-700 flex items-center gap-2">
-                      <Users className="h-5 w-5 text-amber-500" /> Undang Peserta <span className="text-red-500 ml-1 font-bold">*</span>
-                    </h2>
+                <div className="bg-white p-4 sm:p-6 rounded-2xl sm:rounded-3xl lg:rounded-[2.5rem] border-2 border-slate-200 shadow-[0_4px_0_0_#cbd5e1] lg:shadow-[0_8px_0_0_#cbd5e1]">
+                  <div className="flex items-center justify-between gap-2 mb-4">
+                    <div className="flex items-center gap-1.5 min-w-0">
+                      <h2 className="text-base font-black text-slate-800 flex items-center gap-1.5 whitespace-nowrap">
+                        <Users className="h-5 w-5 text-amber-500 shrink-0" />
+                        <span>Undang Peserta</span>
+                        <span className="text-red-500 font-bold">*</span>
+                      </h2>
+                      {invitedUsers.length > 0 && (
+                        <span className="text-[11px] font-extrabold text-amber-700 bg-amber-100/90 border border-amber-200/70 px-2 py-0.5 rounded-full shrink-0">
+                          {invitedUsers.length}
+                        </span>
+                      )}
+                    </div>
                     <button 
                       type="button" 
                       onClick={() => setShowAllUsersModal(true)}
-                      className="text-amber-600 hover:text-amber-700 text-sm font-bold flex items-center gap-1"
+                      className="shrink-0 flex items-center gap-1 text-xs font-bold text-amber-700 hover:text-amber-800 bg-amber-50 hover:bg-amber-100/80 px-2.5 py-1.5 rounded-xl border border-amber-200 transition-all whitespace-nowrap shadow-2xs active:scale-95"
                     >
-                      Lihat Semua <ChevronDown className="w-4 h-4 -rotate-90" />
+                      <span>Lihat Semua</span>
+                      <ChevronDown className="w-3.5 h-3.5 -rotate-90 text-amber-500" />
                     </button>
                   </div>
 
@@ -1154,8 +1178,8 @@ const CreateMaterial = () => {
                                     className="w-6 h-6 rounded-full object-cover border border-amber-300"
                                   />
                                 ) : (
-                                  <span className="w-6 h-6 flex items-center justify-center bg-amber-100 rounded-full text-amber-500 font-bold">
-                                    👤
+                                  <span className="w-6 h-6 flex items-center justify-center bg-amber-100 rounded-full text-amber-700 font-bold text-[10px]">
+                                    {(user?.label || userEmail).charAt(0).toUpperCase()}
                                   </span>
                                 )}
                                 <span className="truncate max-w-30">
@@ -1178,7 +1202,7 @@ const CreateMaterial = () => {
                 </div>
 
                 {/* Submit Card */}
-                <div className="bg-emerald-500 p-6 rounded-[2.5rem] text-white border-2 border-emerald-600 shadow-[0_6px_0_0_#059669] mb-8">
+                <div className="bg-emerald-500 p-4 sm:p-6 rounded-2xl sm:rounded-[2.5rem] text-white border-2 border-emerald-600 shadow-[0_4px_0_0_#059669] sm:shadow-[0_6px_0_0_#059669] mb-8">
                   <div className="flex items-center gap-3 mb-4">
                     <GraduationCap
                       className="h-8 w-8 text-emerald-100"
@@ -1218,13 +1242,18 @@ const CreateMaterial = () => {
 
       {/* Modal Lihat Semua User */}
       {showAllUsersModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="bg-white w-full max-w-lg rounded-[2rem] shadow-2xl flex flex-col max-h-[90vh] md:max-h-[80vh] border-2 border-slate-200 overflow-hidden animate-in slide-in-from-bottom-10 md:slide-in-from-bottom-0 md:zoom-in-95 duration-300">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="bg-white w-full max-w-lg rounded-[2rem] shadow-2xl flex flex-col max-h-[90vh] md:max-h-[85vh] border border-slate-200 overflow-hidden animate-in slide-in-from-bottom-6 md:slide-in-from-bottom-0 md:zoom-in-95 duration-200">
             {/* Modal Header */}
             <div className="p-5 md:p-6 border-b border-slate-100 flex items-center justify-between shrink-0 bg-white">
-              <h2 className="text-lg md:text-xl font-black text-slate-800 flex items-center gap-2">
-                <Users className="w-5 h-5 text-amber-500" /> Pilih Peserta
-              </h2>
+              <div>
+                <h2 className="text-lg md:text-xl font-black text-slate-800 flex items-center gap-2">
+                  <Users className="w-5 h-5 text-amber-500" /> Pilih Peserta Kajian
+                </h2>
+                <p className="text-xs text-slate-400 font-medium mt-0.5">
+                  Centang anggota yang ingin di-invite ke kajian ini
+                </p>
+              </div>
               <button
                 type="button"
                 onClick={() => setShowAllUsersModal(false)}
@@ -1235,81 +1264,238 @@ const CreateMaterial = () => {
             </div>
             
             {/* Modal Body */}
-            <div className="flex-1 overflow-y-auto bg-slate-50 p-4 md:p-6 space-y-4 relative">
-              <div className="sticky top-0 z-10 bg-slate-50 pb-2">
+            <div className="flex-1 overflow-y-auto bg-slate-50/70 p-4 md:p-6 space-y-3.5 relative">
+              {/* Search Bar */}
+              <div className="sticky top-0 z-10 bg-slate-50/95 backdrop-blur-xs pb-1">
                 <SearchInput
                   placeholder="Cari user (nama / email)..."
                   value={searchModalInput}
                   onChange={setSearchModalInput}
-                  className="w-full bg-white"
+                  className="w-full bg-white shadow-xs"
                 />
               </div>
 
-              <div className="flex items-center justify-between pt-2 pb-1">
-                <p className="text-xs font-bold text-slate-500">
-                  Terpilih: <span className="text-amber-600">{invitedUsers.length}</span> dari {userOptions.length}
-                </p>
+              {/* Anggota yang Ingin Di-Invite (Selected Chips Bar) */}
+              {invitedUsers.length > 0 && (
+                <div className="bg-white rounded-2xl p-3.5 border border-amber-200/80 shadow-xs space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-amber-900 flex items-center gap-1.5">
+                      <UserCheck className="w-4 h-4 text-amber-600" />
+                      Anggota yang ingin di-invite:
+                      <span className="text-amber-700 bg-amber-100/80 px-2 py-0.5 rounded-full text-[11px] font-extrabold">
+                        {invitedUsers.length}
+                      </span>
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => setInvitedUsers([])}
+                      className="text-[11px] font-bold text-slate-400 hover:text-red-500 transition-colors"
+                    >
+                      Batal Semua
+                    </button>
+                  </div>
+
+                  {/* Horizontal scrollable avatars/chips */}
+                  <div className="flex gap-2 overflow-x-auto pb-1 pt-0.5 scrollbar-thin scrollbar-thumb-amber-200">
+                    {invitedUsers.map((email) => {
+                      const user = userOptions.find((u) => u.email === email);
+                      const name = user?.label || email;
+                      return (
+                        <div
+                          key={email}
+                          className="flex items-center gap-1.5 bg-amber-50/90 border border-amber-200 rounded-xl pl-1.5 pr-2 py-1 shrink-0 group hover:bg-red-50 hover:border-red-200 transition-all"
+                        >
+                          {user?.avatar ? (
+                            <img
+                              src={user.avatar}
+                              alt={name}
+                              className="w-5 h-5 rounded-full object-cover border border-amber-200 shrink-0"
+                            />
+                          ) : (
+                            <div className="w-5 h-5 rounded-full bg-amber-200 flex items-center justify-center text-amber-800 font-black text-[10px] shrink-0">
+                              {name.charAt(0).toUpperCase()}
+                            </div>
+                          )}
+                          <span className="text-xs font-bold text-slate-700 max-w-[120px] truncate group-hover:text-red-900">
+                            {name}
+                          </span>
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleToggleUserSelect(email);
+                            }}
+                            className="text-slate-400 hover:text-red-600 rounded-md p-0.5 transition-colors ml-0.5"
+                            title="Hapus"
+                          >
+                            <X className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {/* Filter Tabs & Select All Controls */}
+              <div className="flex items-center justify-between gap-2 pt-1 pb-0.5">
+                {/* Tabs: Semua vs Terpilih */}
+                <div className="flex items-center gap-1 bg-slate-200/70 p-1 rounded-xl">
+                  <button
+                    type="button"
+                    onClick={() => setModalFilter("all")}
+                    className={`px-3 py-1 text-xs font-bold rounded-lg transition-all ${
+                      modalFilter === "all"
+                        ? "bg-white text-slate-800 shadow-xs"
+                        : "text-slate-500 hover:text-slate-800"
+                    }`}
+                  >
+                    Semua ({userOptions.length})
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setModalFilter("selected")}
+                    className={`px-3 py-1 text-xs font-bold rounded-lg transition-all ${
+                      modalFilter === "selected"
+                        ? "bg-white text-amber-700 shadow-xs"
+                        : "text-slate-500 hover:text-amber-700"
+                    }`}
+                  >
+                    Terpilih ({invitedUsers.length})
+                  </button>
+                </div>
+
+                {/* Professional Select All Button */}
                 <button
                   type="button"
                   onClick={handleSelectAllUsers}
-                  className="flex items-center gap-1.5 text-xs font-black text-amber-600 hover:text-amber-700 transition-colors"
+                  className="group flex items-center gap-2 px-3 py-1.5 rounded-xl border border-slate-200 bg-white hover:bg-amber-50/60 hover:border-amber-300 transition-all text-xs font-bold text-slate-700 hover:text-amber-700 shadow-xs"
                 >
-                  {isAllUsersSelected ? (
-                    <><CheckSquare className="w-4 h-4" /> Batal Pilih Semua</>
-                  ) : (
-                    <><Square className="w-4 h-4" /> Pilih Semua</>
-                  )}
+                  <div
+                    className={`w-4 h-4 rounded-md flex items-center justify-center transition-all ${
+                      isAllUsersSelected
+                        ? "bg-amber-500 border-2 border-amber-500 text-white shadow-xs"
+                        : invitedUsers.length > 0
+                        ? "bg-amber-50 border-2 border-amber-400 text-amber-600"
+                        : "border-2 border-slate-300 bg-white group-hover:border-amber-400"
+                    }`}
+                  >
+                    {isAllUsersSelected ? (
+                      <Check className="w-3 h-3 text-white stroke-[3]" />
+                    ) : invitedUsers.length > 0 ? (
+                      <div className="w-2 h-0.5 bg-amber-600 rounded-full" />
+                    ) : null}
+                  </div>
+                  <span>{isAllUsersSelected ? "Batal Semua" : "Pilih Semua"}</span>
                 </button>
               </div>
 
+              {/* User List */}
               <div className="space-y-2">
                 {userOptions
-                  .filter(u => 
-                     u.label.toLowerCase().includes(searchModalInput.toLowerCase()) || 
-                     u.email.toLowerCase().includes(searchModalInput.toLowerCase())
-                  )
+                  .filter((u) => {
+                    const matchesSearch =
+                      u.label.toLowerCase().includes(searchModalInput.toLowerCase()) ||
+                      u.email.toLowerCase().includes(searchModalInput.toLowerCase());
+                    if (!matchesSearch) return false;
+                    if (modalFilter === "selected") {
+                      return invitedUsers.includes(u.email);
+                    }
+                    return true;
+                  })
                   .map((user) => {
                     const isSelected = invitedUsers.includes(user.email);
                     return (
                       <div 
                         key={user.email}
                         onClick={() => handleToggleUserSelect(user.email)}
-                        className={`flex items-center gap-3 p-3 rounded-2xl border-2 transition-all cursor-pointer ${
+                        className={`group flex items-center gap-3.5 p-3.5 rounded-2xl border transition-all duration-150 cursor-pointer select-none ${
                           isSelected 
-                            ? "bg-amber-50 border-amber-300 shadow-[0_2px_0_0_#fcd34d]" 
-                            : "bg-white border-slate-100 hover:border-slate-300 hover:shadow-sm"
+                            ? "bg-amber-50/70 border-amber-300 shadow-xs ring-1 ring-amber-300/40" 
+                            : "bg-white border-slate-200/80 hover:border-slate-300 hover:bg-slate-50/60 shadow-[0_1px_2px_rgba(0,0,0,0.02)]"
                         }`}
                       >
-                         <div className={`w-5 h-5 rounded flex items-center justify-center shrink-0 border ${isSelected ? "bg-amber-500 border-amber-600" : "bg-white border-slate-300"}`}>
-                           {isSelected && <CheckSquare className="w-4 h-4 text-white" />}
+                         {/* Professional Modern Checkbox */}
+                         <div
+                           className={`w-5 h-5 rounded-lg flex items-center justify-center shrink-0 transition-all duration-150 ${
+                             isSelected 
+                               ? "bg-amber-500 border-2 border-amber-500 text-white shadow-sm shadow-amber-500/25 scale-105" 
+                               : "border-2 border-slate-300 bg-white group-hover:border-amber-400 group-hover:bg-slate-50"
+                           }`}
+                         >
+                           {isSelected && <Check className="w-3.5 h-3.5 text-white stroke-[3] animate-in zoom-in-50 duration-150" />}
                          </div>
                          
+                         {/* Avatar */}
                          {user.avatar ? (
-                            <img src={user.avatar} alt={user.label} className="w-8 h-8 rounded-full object-cover border border-slate-200" />
+                            <img
+                              src={user.avatar}
+                              alt={user.label}
+                              className="w-9 h-9 rounded-full object-cover border border-slate-200 shrink-0 shadow-xs"
+                            />
                          ) : (
-                            <div className="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center text-amber-600 font-bold text-xs uppercase">
+                            <div className="w-9 h-9 rounded-full bg-gradient-to-br from-amber-100 to-amber-200 border border-amber-200/80 flex items-center justify-center text-amber-700 font-black text-xs uppercase shrink-0 shadow-xs">
                               {user.label.charAt(0)}
                             </div>
                          )}
                          
+                         {/* User Details */}
                          <div className="flex-1 min-w-0">
-                           <p className={`font-bold text-sm truncate ${isSelected ? "text-amber-900" : "text-slate-700"}`}>{user.label}</p>
-                           <p className="text-xs text-slate-400 truncate">{user.email}</p>
+                           <div className="flex items-center justify-between gap-2">
+                             <p className={`font-bold text-sm truncate ${isSelected ? "text-amber-950" : "text-slate-800"}`}>
+                               {user.label}
+                             </p>
+                             {isSelected && (
+                               <span className="text-[10px] font-bold text-amber-700 bg-amber-100/90 border border-amber-200/60 px-2 py-0.5 rounded-full flex items-center gap-1 shrink-0">
+                                 <Check className="w-2.5 h-2.5 stroke-[3]" /> Terpilih
+                               </span>
+                             )}
+                           </div>
+                           <p className="text-xs text-slate-400 truncate mt-0.5">{user.email}</p>
                          </div>
                       </div>
                     );
                 })}
+
+                {/* Empty State when no results */}
+                {userOptions.filter((u) => {
+                  const matchesSearch =
+                    u.label.toLowerCase().includes(searchModalInput.toLowerCase()) ||
+                    u.email.toLowerCase().includes(searchModalInput.toLowerCase());
+                  if (!matchesSearch) return false;
+                  if (modalFilter === "selected") {
+                    return invitedUsers.includes(u.email);
+                  }
+                  return true;
+                }).length === 0 && (
+                  <div className="text-center py-8 px-4 bg-white rounded-2xl border border-dashed border-slate-200">
+                    <Users className="w-8 h-8 text-slate-300 mx-auto mb-2" />
+                    <p className="text-sm font-bold text-slate-600">
+                      {modalFilter === "selected" 
+                        ? "Belum ada peserta yang dipilih" 
+                        : "Tidak ada user yang ditemukan"}
+                    </p>
+                    <p className="text-xs text-slate-400 mt-1">
+                      {modalFilter === "selected"
+                        ? "Pilih peserta dari tab Semua untuk mengundang mereka"
+                        : "Coba kata kunci pencarian yang lain"}
+                    </p>
+                  </div>
+                )}
               </div>
             </div>
 
             {/* Modal Footer */}
-            <div className="p-4 md:p-6 border-t border-slate-100 bg-white shrink-0">
+            <div className="p-4 md:p-5 border-t border-slate-100 bg-white shrink-0 flex items-center justify-between gap-3">
+               <div className="text-xs font-bold text-slate-500">
+                 <span className="text-amber-600 font-extrabold text-sm">{invitedUsers.length}</span> peserta dipilih
+               </div>
                <button 
                  type="button" 
                  onClick={() => setShowAllUsersModal(false)}
-                 className="w-full py-3 md:py-4 bg-amber-500 text-white font-black rounded-2xl border-b-4 border-amber-600 hover:bg-amber-400 active:border-b-0 active:translate-y-1 transition-all"
+                 className="px-6 py-2.5 md:py-3 bg-amber-500 text-white font-black rounded-xl border-b-4 border-amber-600 hover:bg-amber-400 active:border-b-0 active:translate-y-1 transition-all shadow-sm"
                >
-                 Selesai ({invitedUsers.length} Peserta)
+                 Selesai
                </button>
             </div>
           </div>

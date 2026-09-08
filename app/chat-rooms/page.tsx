@@ -24,7 +24,6 @@ import {
 } from "@/lib/chat-utils";
 import {
   Send,
-  Menu,
   Users,
   MessageSquare,
   Globe2,
@@ -415,16 +414,6 @@ const GlobalForumPage = () => {
             {/* ── Forum header bar ──────────────────────────────────────── */}
             <div className="flex items-center justify-between px-3 lg:px-4 py-3 bg-white border-b-2 border-slate-100 shadow-sm z-20 shrink-0">
               <div className="flex items-center gap-3">
-                {/* Mobile menu toggle */}
-                <button
-                  onClick={() =>
-                    window.dispatchEvent(new CustomEvent("open-mobile-sidebar"))
-                  }
-                  className="lg:hidden p-2 -ml-2 text-slate-600 hover:bg-slate-100 hover:text-teal-600 rounded-xl transition-colors"
-                >
-                  <Menu className="h-6 w-6" strokeWidth={2.5} />
-                </button>
-
                 <Avatar className="h-10 w-10 border-2 border-white shadow-sm ring-2 ring-slate-100 bg-teal-100 text-teal-500">
                   <AvatarFallback className="font-black bg-teal-100">
                     <Globe2 className="h-5 w-5 text-teal-500" />
@@ -532,16 +521,11 @@ const GlobalForumPage = () => {
                               {showAvatar && (
                                 <Avatar className="h-8 w-8 border border-slate-200 shadow-sm">
                                   <AvatarImage
-                                    src={
-                                      message.sender.avatar ??
-                                      `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(message.sender.name)}`
-                                    }
+                                    src={message.sender.avatar ?? undefined}
                                     alt={message.sender.name}
                                   />
-                                  <AvatarFallback>
-                                    {message.sender.name
-                                      .slice(0, 2)
-                                      .toUpperCase()}
+                                  <AvatarFallback className="bg-emerald-500 text-white font-bold">
+                                    {(message.sender.name?.trim().charAt(0) || "U").toUpperCase()}
                                   </AvatarFallback>
                                 </Avatar>
                               )}

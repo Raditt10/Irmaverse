@@ -21,6 +21,7 @@ import {
 } from "lucide-react";
 import AddButton from "@/components/ui/AddButton";
 import PageBanner from "@/components/ui/PageBanner";
+import SafeImage from "@/components/ui/SafeImage";
 
 interface Schedule {
   id: string;
@@ -87,7 +88,7 @@ const Schedule = () => {
           : schedule.status === "ongoing" 
           ? "Sedang berlangsung" 
           : "Kegiatan telah selesai",
-        thumbnail: schedule.thumbnailUrl || `https://picsum.photos/seed/event${schedule.id}/200/200`,
+        thumbnail: schedule.thumbnailUrl || null,
       }));
       
       setSchedules(mappedSchedules);
@@ -256,9 +257,12 @@ const Schedule = () => {
                       <div className="flex items-start gap-5 mb-5">
                         {/* Event Image */}
                         <div className="shrink-0 w-20 h-20 rounded-2xl overflow-hidden border-2 border-slate-100 shadow-sm group-hover:scale-105 transition-transform">
-                          <img 
+                          <SafeImage 
                             src={(schedule as any).thumbnail} 
                             alt={schedule.title}
+                            fallbackType="thumbnail"
+                            contentType="kegiatan"
+                            fallbackName={schedule.title}
                             className="w-full h-full object-cover"
                           />
                         </div>

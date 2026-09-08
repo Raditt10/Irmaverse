@@ -20,6 +20,7 @@ import Link from "next/link";
 import { useSession } from "next-auth/react";
 import CategoryFilter from "@/components/ui/CategoryFilter";
 import PageBanner from "@/components/ui/PageBanner";
+import SafeImage from "@/components/ui/SafeImage";
 
 interface Instructor {
   id: string;
@@ -95,7 +96,7 @@ const Instructors = () => {
         specialization: u.bidangKeahlian || "Umum",
         description: u.pengalaman || "Belum ada deskripsi.",
         bio: u.bio || "",
-        avatar: u.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${u.name || "user"}`,
+        avatar: u.avatar || null,
         rating: u.rating ?? 0,
         studentsCount: u.studentsCount || 0,
         kajianCount: u.kajianCount ?? 0,
@@ -144,8 +145,12 @@ const Instructors = () => {
     }
   };
 
-  // Logic Filtering
+  // Logic Filtering (sembunyikan akun instruktur sendiri jika sedang login)
+  const currentUserId = session?.user?.id ? String(session.user.id) : null;
   const filteredInstructors = instructors.filter((instructor) => {
+    if (currentUserId && String(instructor.id) === currentUserId) {
+      return false;
+    }
     const matchesSearch = instructor.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
                           instructor.specialization.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesFilter = specializationFilter === "all" || instructor.specialization === specializationFilter;
@@ -300,9 +305,11 @@ const Instructors = () => {
                               <div className={`relative w-24 h-24 md:w-32 md:h-32 rounded-full border-4 border-white shadow-xl group-hover:scale-110 transition-transform duration-500 overflow-hidden ${
                                 instructor.featured ? 'ring-4 ring-emerald-100' : 'ring-2 ring-slate-50'
                               }`}>
-                                <img
+                                <SafeImage
                                   src={instructor.avatar}
                                   alt={instructor.name}
+                                  type="avatar"
+                                  name={instructor.name}
                                   className="w-full h-full object-cover"
                                 />
                               </div>

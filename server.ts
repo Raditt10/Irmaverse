@@ -84,6 +84,32 @@ app.prepare().then(() => {
       return;
     }
 
+    // Internal endpoint for broadcasting avatar updates from API routes
+    if (
+      parsedUrl.pathname === "/__internal/update-avatar" &&
+      req.method === "POST"
+    ) {
+      let body = "";
+      req.on("data", (chunk) => {
+        body += chunk;
+      });
+      req.on("end", () => {
+        try {
+          const { userId, avatarUrl } = JSON.parse(body);
+          if (userId && avatarUrl && ioInstance) {
+            ioInstance.emit("user:avatar-updated", { userId, avatarUrl });
+            console.log(`[Socket] Broadcasted avatar update for user ${userId}`);
+          }
+          res.writeHead(200, { "Content-Type": "application/json" });
+          res.end(JSON.stringify({ ok: true }));
+        } catch {
+          res.writeHead(400);
+          res.end("Bad request");
+        }
+      });
+      return;
+    }
+
     // Skip Next.js handler for socket.io requests
     if (parsedUrl.pathname?.startsWith("/socket.io")) {
       return;
@@ -269,6 +295,15 @@ app.prepare().then(() => {
         lastSeen: new Date().toISOString(),
       });
     });
+
+    // Handle user avatar update
+    socket.on(
+      "user:avatar-update",
+      (data: { userId: string; avatarUrl: string }) => {
+        io.emit("user:avatar-updated", data);
+        console.log(`[Socket] user:avatar-updated broadcasted for ${data.userId}`);
+      },
+    );
 
     // ── Forum (Global Public Chat) ─────────────────────────────────────────
 

@@ -825,11 +825,11 @@ const InstructorChatDashboard = () => {
                         <div className="relative">
                           <Avatar className="h-12 w-12 border-2 border-slate-100 shadow-sm">
                             <AvatarImage
-                              src={conv.participant.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${conv.participant.name}`}
+                              src={conv.participant.avatar || undefined}
                               alt={conv.participant.name || ""}
                             />
                             <AvatarFallback className="bg-teal-500 text-white font-black text-lg">
-                              {conv.participant.name?.charAt(0).toUpperCase()}
+                              {conv.participant.name?.trim().charAt(0).toUpperCase() || "U"}
                             </AvatarFallback>
                           </Avatar>
                           {isParticipantOnline(conv.participant.id) && (
@@ -887,11 +887,11 @@ const InstructorChatDashboard = () => {
                         <div className="relative">
                           <Avatar className="h-11 w-11 border-2 border-white shadow-md ring-2 ring-slate-100">
                             <AvatarImage
-                              src={selectedConversation.participant.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${selectedConversation.participant.name}`}
+                              src={selectedConversation.participant.avatar || undefined}
                               alt={selectedConversation.participant.name || ""}
                             />
                             <AvatarFallback className="bg-teal-500 text-white font-black text-lg">
-                              {selectedConversation.participant.name?.charAt(0).toUpperCase()}
+                              {selectedConversation.participant.name?.trim().charAt(0).toUpperCase() || "U"}
                             </AvatarFallback>
                           </Avatar>
                           {isParticipantOnline(selectedConversation.participant.id) && (
@@ -1367,8 +1367,8 @@ const InstructorChatDashboard = () => {
                       >
                         <div className="relative shrink-0">
                           <Avatar className="h-12 w-12 border-[3px] border-white shadow-sm group-hover:border-emerald-100 transition-colors">
-                            <AvatarImage src={user.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.name}`} />
-                            <AvatarFallback className="bg-teal-500 text-white font-black text-lg">{user.name.charAt(0).toUpperCase()}</AvatarFallback>
+                            <AvatarImage src={user.avatar || undefined} />
+                            <AvatarFallback className="bg-teal-500 text-white font-black text-lg">{user.name?.trim().charAt(0).toUpperCase() || "U"}</AvatarFallback>
                           </Avatar>
                           <div className={`absolute -bottom-1 -right-1 w-5 h-5 bg-white rounded-full flex items-center justify-center shadow-sm`}>
                             <div className={`w-3 h-3 rounded-full ${onlineUsers.has(user.id) ? 'bg-emerald-400 animate-pulse' : 'bg-slate-300'}`} />

@@ -8,6 +8,7 @@ import Sidebar from "@/components/ui/Sidebar";
 import Toast from "@/components/ui/Toast";
 import CartoonConfirmDialog from "@/components/ui/ConfirmDialog"; // Import Confirm Dialog
 import Loading from "@/components/ui/Loading";
+import SafeImage from "@/components/ui/SafeImage";
 import {
   Calendar,
   User,
@@ -272,18 +273,18 @@ const ProgramDetail = () => {
 
             {/* HERO */}
             <div className="relative bg-white rounded-4xl lg:rounded-[2.5rem] border-2 border-slate-200 shadow-[0_8px_0_0_#cbd5e1] overflow-hidden group">
-              <div className="relative h-64 md:h-80 lg:h-96 w-full overflow-hidden border-b-2 border-slate-200">
-                <img
-                  src={
-                    program.image ||
-                    "https://picsum.photos/seed/program/1200/600"
-                  }
+              <div className="relative h-64 md:h-80 lg:h-96 w-full overflow-hidden border-b-2 border-slate-200 bg-slate-900">
+                <SafeImage
+                  src={program.image}
                   alt={program.title}
+                  fallbackType="thumbnail"
+                  contentType="program"
+                  fallbackName={program.title}
                   className={`w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ${
                     program.isLocked ? "blur-sm opacity-80" : ""
                   }`}
                 />
-                <div className="absolute inset-0 bg-linear-to-t from-slate-900/90 via-slate-900/40 to-transparent" />
+                <div className="absolute inset-0 bg-linear-to-t from-slate-900/90 via-slate-900/40 to-transparent pointer-events-none" />
 
                 {program.isLocked && (
                   <div className="absolute inset-x-0 top-1/2 -translate-y-[85%] lg:-translate-y-[65%] flex flex-col items-center justify-center z-10 pointer-events-none px-4">

@@ -13,6 +13,7 @@ import CartoonConfirmDialog from "@/components/ui/ConfirmDialog";
 import Toast from "@/components/ui/Toast";
 import CategoryFilter from "@/components/ui/CategoryFilter";
 import AddButton from "@/components/ui/AddButton";
+import SafeImage from "@/components/ui/SafeImage";
 import {
   BookOpen,
   ChevronDown,
@@ -86,10 +87,9 @@ const OurPrograms = () => {
       if (!res.ok) throw new Error("Gagal mengambil data program");
       const data = await res.json();
       setPrograms(
-        data.map((p: any, i: number) => ({
+        data.map((p: any) => ({
           ...p,
-          thumbnail:
-            p.thumbnail || `https://picsum.photos/seed/program${i + 1}/400/250`,
+          thumbnail: p.thumbnail || null,
         })),
       );
     } catch (error: any) {
@@ -254,13 +254,16 @@ const OurPrograms = () => {
                       className={`bg-white rounded-3xl lg:rounded-[2.5rem] border-2 shadow-[0_6px_0_0_#cbd5e1] sm:shadow-[0_8px_0_0_#cbd5e1] transition-all duration-300 overflow-hidden group flex flex-col h-full cursor-pointer relative border-slate-200 hover:border-teal-400 hover:shadow-[0_8px_0_0_#34d399] hover:-translate-y-2`}
                     >
                       {/* Image */}
-                      <div className="relative h-40 md:h-52 overflow-hidden border-b-2 border-slate-100">
-                        <img
+                      <div className="relative h-40 md:h-52 overflow-hidden border-b-2 border-slate-100 bg-slate-100">
+                        <SafeImage
                           src={program.thumbnail}
                           alt={program.title}
+                          fallbackType="thumbnail"
+                          contentType="program"
+                          fallbackName={program.title}
                           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                         />
-                        <div className="absolute inset-0 bg-linear-to-t from-black/60 to-transparent" />
+                        <div className="absolute inset-0 bg-linear-to-t from-black/60 to-transparent pointer-events-none" />
 
                         {/* Category Badge */}
                         <div className="absolute top-4 right-4 px-3 py-1 rounded-full flex items-center gap-1.5 border-2 shadow-sm bg-white/90 border-white/80">

@@ -91,6 +91,22 @@ export default function AdminUsersPage() {
     if (status === "authenticated") fetchUsers();
   }, [status]);
 
+  useEffect(() => {
+    const handleAvatarUpdate = (e: Event) => {
+      const detail = (e as CustomEvent).detail;
+      if (detail?.userId && detail?.avatarUrl) {
+        setUsers((prev) =>
+          prev.map((u) =>
+            u.id === detail.userId ? { ...u, avatar: detail.avatarUrl } : u,
+          ),
+        );
+      }
+    };
+    window.addEventListener("user-avatar-updated", handleAvatarUpdate);
+    return () =>
+      window.removeEventListener("user-avatar-updated", handleAvatarUpdate);
+  }, []);
+
   const fetchUsers = async () => {
     try {
       const res = await fetch("/api/admin/users");
@@ -183,7 +199,7 @@ export default function AdminUsersPage() {
 
   const getRoleBadge = (jabatan: string | null) => {
     return (
-      <span className="px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-slate-100 text-slate-600 border border-slate-200">
+      <span className="px-2.5 py-0.5 rounded-lg text-[10px] font-black uppercase tracking-wider bg-emerald-50 text-emerald-700 border border-emerald-200 shrink-0">
         {jabatan || "Anggota"}
       </span>
     );
@@ -206,18 +222,18 @@ export default function AdminUsersPage() {
   return (
     <div className="min-h-screen bg-[#FDFBF7]">
       <DashboardHeader />
-      <div className="flex">
+      <div className="flex min-w-0 w-full overflow-x-hidden">
         <Sidebar />
-        <main className="flex-1 p-4 md:p-6 lg:p-8 max-w-7xl mx-auto">
+        <main className="flex-1 min-w-0 p-4 sm:p-6 lg:p-8 pt-5 sm:pt-6 lg:pt-8 max-w-7xl mx-auto w-full">
           {/* Header */}
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
             <div>
-              <h1 className="text-2xl md:text-4xl font-black text-slate-800 tracking-tight mb-1">Kelola Akun Anggota</h1>
-              <p className="text-slate-500 font-bold text-base md:text-lg ml-1">Tambah, edit, dan kelola semua akun anggota IRMA.</p>
+              <h1 className="text-2xl sm:text-3xl md:text-4xl font-black text-slate-800 tracking-tight mb-1">Kelola Akun Anggota</h1>
+              <p className="text-slate-500 font-bold text-xs sm:text-sm md:text-base ml-0.5">Tambah, edit, dan kelola semua akun anggota IRMA.</p>
             </div>
             <button
               onClick={openAddModal}
-              className="flex items-center gap-2 px-5 py-3 bg-linear-to-r from-emerald-400 to-teal-400 text-white rounded-2xl font-black text-sm shadow-[0_4px_0_0_#059669] hover:-translate-y-1 hover:shadow-[0_6px_0_0_#059669] active:translate-y-0 active:shadow-none transition-all border-2 border-emerald-500"
+              className="w-full sm:w-auto flex items-center justify-center gap-2 px-5 py-3 bg-linear-to-r from-emerald-400 to-teal-400 text-white rounded-2xl font-black text-sm shadow-[0_4px_0_0_#059669] hover:-translate-y-0.5 hover:shadow-[0_6px_0_0_#059669] active:translate-y-0 active:shadow-none transition-all border-2 border-emerald-500 shrink-0"
             >
               <Plus className="h-5 w-5" strokeWidth={3} />
               Tambah Anggota
@@ -225,21 +241,21 @@ export default function AdminUsersPage() {
           </div>
 
           {/* Search + Stats */}
-          <div className="flex flex-col md:flex-row gap-4 mb-8">
+          <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center justify-between mb-6">
             <div className="flex-1 max-w-md">
               <SearchInput placeholder="Cari nama atau email..." value={search} onChange={setSearch} />
             </div>
-            <div className="flex items-center gap-2 bg-white px-5 py-3 rounded-2xl border-2 border-slate-100 shadow-sm">
-              <Users className="h-5 w-5 text-emerald-500" />
-              <span className="text-sm font-black text-slate-700">{filtered.length} Anggota</span>
+            <div className="inline-flex items-center gap-2 self-start sm:self-auto bg-white px-4 py-2.5 rounded-2xl border-2 border-slate-100 shadow-xs shrink-0">
+              <Users className="h-4 w-4 text-emerald-500" />
+              <span className="text-xs sm:text-sm font-black text-slate-700">{filtered.length} Anggota</span>
             </div>
           </div>
 
           {/* User List */}
-          <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden mb-8">
-            <div className="divide-y divide-slate-100">
+          <div className="bg-white rounded-3xl border-2 border-slate-200/80 shadow-[0_4px_0_0_#e2e8f0] overflow-hidden mb-8">
+            <div className="divide-y-2 divide-slate-100">
               {filtered.length === 0 ? (
-                <div className="p-8">
+                <div className="p-8 sm:p-12">
                   <EmptyState
                     title="Tidak Ada Anggota"
                     description="Belum ada anggota yang terdaftar atau ditemukan dari pencarian Anda."
@@ -253,54 +269,65 @@ export default function AdminUsersPage() {
                   return (
                     <div 
                       key={user.id} 
-                      className={`flex items-center justify-between p-4 md:p-5 transition-colors group ${
-                        isNew ? 'bg-emerald-50/50 hover:bg-emerald-50/80 border-l-4 border-l-emerald-500' : 'hover:bg-slate-50 border-l-4 border-l-transparent'
+                      className={`p-4 sm:p-5 transition-all group ${
+                        isNew ? 'bg-emerald-50/50 hover:bg-emerald-50/80 border-l-4 border-l-emerald-500' : 'hover:bg-slate-50/80 border-l-4 border-l-transparent'
                       }`}
                     >
-                      <div className="flex items-center gap-4 min-w-0">
-                        <div className="w-12 h-12 rounded-xl bg-emerald-50 border border-emerald-100 flex items-center justify-center overflow-hidden shrink-0 shadow-sm relative">
-                          {user.avatar ? (
-                            <img src={user.avatar} alt={user.name || ""} className="w-full h-full object-cover" />
-                          ) : (
-                            <UserCircle2 className="w-6 h-6 text-emerald-400" />
-                          )}
-                        </div>
-                        <div className="min-w-0">
-                          <div className="flex items-center gap-2 mb-0.5">
-                            <h3 className="font-bold text-slate-800 truncate text-sm md:text-base group-hover:text-emerald-600 transition-colors uppercase tracking-tight">{user.name || "—"}</h3>
-                            {isNew && (
-                              <span className="px-2 py-0.5 bg-emerald-500 text-white rounded text-[10px] font-black uppercase tracking-wider flex items-center gap-1 shadow-sm">
-                                <Zap className="w-2.5 h-2.5 fill-white" /> Baru Daftar
-                              </span>
+                      <div className="flex items-start sm:items-center justify-between gap-3">
+                        {/* Left: Avatar + Info */}
+                        <div className="flex items-start sm:items-center gap-3 sm:gap-4 min-w-0 flex-1">
+                          <div className="w-11 h-11 sm:w-13 sm:h-13 rounded-2xl bg-emerald-50 border-2 border-emerald-100 flex items-center justify-center overflow-hidden shrink-0 shadow-xs relative mt-0.5 sm:mt-0">
+                            {user.avatar ? (
+                              <img src={user.avatar} alt={user.name || ""} className="w-full h-full object-cover" />
+                            ) : (
+                              <UserCircle2 className="w-6 h-6 sm:w-7 sm:h-7 text-emerald-400" />
                             )}
                           </div>
-                          <p className="text-xs text-slate-400 font-medium truncate mb-1.5 lowercase tracking-wide">{user.email}</p>
-                          <div className="flex items-center gap-2">
-                            {getRoleBadge(user.jabatan)}
-                            <span className="text-[10px] text-slate-400 font-bold flex items-center gap-1 uppercase">
-                              <Zap className="h-3 w-3 text-emerald-400" />{user.points} XP
-                            </span>
-                            <span className="text-[10px] text-slate-400 font-bold flex items-center gap-1 uppercase">
-                              <Star className="h-3 w-3 text-amber-400" />Lv.{user.level}
-                            </span>
+                          <div className="min-w-0 flex-1">
+                            <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 mb-0.5">
+                              <h3 className="font-black text-slate-800 truncate text-sm sm:text-base group-hover:text-emerald-600 transition-colors uppercase tracking-tight">
+                                {user.name || "—"}
+                              </h3>
+                              {isNew && (
+                                <span className="px-1.5 py-0.5 bg-emerald-500 text-white rounded-md text-[9px] font-black uppercase tracking-wider flex items-center gap-1 shadow-xs shrink-0">
+                                  <Zap className="w-2.5 h-2.5 fill-white" /> Baru
+                                </span>
+                              )}
+                            </div>
+                            <p className="text-xs text-slate-400 font-semibold truncate mb-1.5 lowercase tracking-wide">
+                              {user.email}
+                            </p>
+                            <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
+                              {getRoleBadge(user.jabatan)}
+                              <span className="text-[10px] text-slate-500 font-black bg-slate-100 px-2 py-0.5 rounded-lg flex items-center gap-1 uppercase shrink-0">
+                                <Zap className="h-3 w-3 text-emerald-500" />{user.points} XP
+                              </span>
+                              <span className="text-[10px] text-slate-500 font-black bg-slate-100 px-2 py-0.5 rounded-lg flex items-center gap-1 uppercase shrink-0">
+                                <Star className="h-3 w-3 text-amber-500" />Lv.{user.level}
+                              </span>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                      <div className="flex items-center gap-2 shrink-0">
-                        <button
-                          onClick={() => openEditModal(user)}
-                          className="p-2.5 rounded-xl bg-white border border-slate-200 text-slate-400 hover:border-emerald-400 hover:text-emerald-600 hover:bg-emerald-50 shadow-sm hover:shadow-[0_2px_0_0_#a7f3d0] active:shadow-none active:translate-y-0.5 transition-all"
-                          title="Edit"
-                        >
-                          <Edit3 className="h-4 w-4" strokeWidth={2.5} />
-                        </button>
-                        <button
-                          onClick={() => setDeleteTarget(user)}
-                          className="p-2.5 rounded-xl bg-white border border-slate-200 text-slate-400 hover:border-red-300 hover:text-red-500 hover:bg-red-50 shadow-sm hover:shadow-[0_2px_0_0_#fecaca] active:shadow-none active:translate-y-0.5 transition-all"
-                          title="Hapus"
-                        >
-                          <Trash2 className="h-4 w-4" strokeWidth={2.5} />
-                        </button>
+
+                        {/* Right: Actions */}
+                        <div className="flex items-center gap-1.5 sm:gap-2 shrink-0 self-start sm:self-center">
+                          <button
+                            onClick={() => openEditModal(user)}
+                            className="h-9 w-9 sm:h-10 sm:w-10 rounded-xl bg-white border-2 border-slate-200 text-slate-500 hover:border-emerald-400 hover:text-emerald-600 hover:bg-emerald-50 shadow-[2px_2px_0_0_#cbd5e1] hover:shadow-[2px_2px_0_0_#34d399] active:shadow-none active:translate-y-0.5 transition-all flex items-center justify-center"
+                            title="Edit Akun"
+                            aria-label="Edit Akun"
+                          >
+                            <Edit3 className="h-4 w-4" strokeWidth={2.5} />
+                          </button>
+                          <button
+                            onClick={() => setDeleteTarget(user)}
+                            className="h-9 w-9 sm:h-10 sm:w-10 rounded-xl bg-white border-2 border-slate-200 text-slate-500 hover:border-rose-400 hover:text-rose-600 hover:bg-rose-50 shadow-[2px_2px_0_0_#cbd5e1] hover:shadow-[2px_2px_0_0_#fb7185] active:shadow-none active:translate-y-0.5 transition-all flex items-center justify-center"
+                            title="Hapus Akun"
+                            aria-label="Hapus Akun"
+                          >
+                            <Trash2 className="h-4 w-4" strokeWidth={2.5} />
+                          </button>
+                        </div>
                       </div>
                     </div>
                   );

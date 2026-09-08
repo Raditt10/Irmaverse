@@ -17,6 +17,7 @@ import { Calendar, Clock, Plus, BookOpen, CheckCheck, User as UserIcon, Clipboar
 import AddButton from "@/components/ui/AddButton";
 import DeleteButton from "@/components/ui/DeleteButton";
 import DetailButton from "@/components/ui/DetailButton";
+import SafeImage from "@/components/ui/SafeImage";
 
 interface Material {
   id: string;
@@ -439,13 +440,16 @@ const Materials = () => {
                       className="bg-white rounded-3xl lg:rounded-4xl border-2 border-slate-200 shadow-[0_6px_0_0_#cbd5e1] sm:shadow-[0_8px_0_0_#cbd5e1] hover:border-emerald-400 hover:shadow-[0_8px_0_0_#34d399] transition-all duration-300 overflow-hidden group hover:-translate-y-2 flex flex-col h-full cursor-pointer"
                     >
                       {/* Thumbnail */}
-                      <div className="relative h-40 md:h-52 overflow-hidden border-b-2 border-slate-100">
-                        <img
+                      <div className="relative h-40 md:h-52 overflow-hidden border-b-2 border-slate-100 bg-slate-100">
+                        <SafeImage
                           src={material.thumbnailUrl}
                           alt={material.title}
+                          fallbackType="thumbnail"
+                          contentType="kajian"
+                          fallbackName={material.title}
                           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                         />
-                        <div className="absolute inset-0 bg-linear-to-t from-black/50 to-transparent" />
+                        <div className="absolute inset-0 bg-linear-to-t from-black/50 to-transparent pointer-events-none" />
 
                         {material.createdAt && (new Date().getTime() - new Date(material.createdAt).getTime() < 10 * 60 * 1000) && (
                           <span className="absolute top-4 right-4 bg-red-500 text-white text-[10px] font-black px-3 py-1 rounded-full border-2 border-white shadow-md">
@@ -480,17 +484,14 @@ const Materials = () => {
                           </h3>
 
                             <div className="flex items-center gap-2.5 mb-4 group/inst">
-                              {material.instructorAvatar ? (
-                                <img
-                                  src={material.instructorAvatar}
-                                  alt={material.instructor || "Instructor"}
-                                  className="w-8 h-8 rounded-full object-cover border-2 border-white shadow-md group-hover/inst:scale-110 transition-transform"
-                                />
-                              ) : (
-                                <div className="w-8 h-8 rounded-full bg-indigo-50 flex items-center justify-center border border-indigo-100 shadow-xs group-hover/inst:scale-110 transition-transform">
-                                  <UserIcon className="w-4 h-4 text-indigo-500" fill="currentColor" />
-                                </div>
-                              )}
+                              <SafeImage
+                                src={material.instructorAvatar}
+                                alt={material.instructor || "Instructor"}
+                                fallbackType="avatar"
+                                fallbackName={material.instructor || "P"}
+                                className="w-8 h-8 rounded-full object-cover border-2 border-white shadow-md group-hover/inst:scale-110 transition-transform"
+                                fallbackClassName="w-8 h-8 rounded-full border-2 border-white shadow-md text-xs font-black"
+                              />
                               <div className="flex flex-col">
                                 <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Pengajar</span>
                                 <p className="text-slate-800 font-extrabold text-sm leading-none">

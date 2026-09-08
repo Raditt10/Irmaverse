@@ -23,6 +23,9 @@ import {
   ShieldAlert,
   ChevronUp,
   Search,
+  Trash2,
+  CheckSquare,
+  Square,
 } from "lucide-react";
 import Toast from "@/components/ui/Toast";
 import {
@@ -38,21 +41,52 @@ import {
   useNotifications,
   type NotificationData,
 } from "@/lib/notification-provider";
+import { useSocket } from "@/lib/socket";
 
 export default function DashboardHeader() {
   const router = useRouter();
   const pathname = usePathname();
   const [showNotifications, setShowNotifications] = useState(false);
+  const notificationContainerRef = useRef<HTMLDivElement>(null);
   const [respondingId, setRespondingId] = useState<string | null>(null);
   const [decliningId, setDecliningId] = useState<string | null>(null);
   const [declineReason, setDeclineReason] = useState("");
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const lastNavAtRef = useRef<number>(Date.now());
-  const togglePointerRef = useRef<{
-    x: number;
-    y: number;
-    t: number;
-  } | null>(null);
+
+  // Close notifications on route change or click outside
+  useEffect(() => {
+    setShowNotifications(false);
+  }, [pathname]);
+
+  useEffect(() => {
+    if (!showNotifications) return;
+
+    const handleClickOutside = (event: MouseEvent | TouchEvent) => {
+      if (
+        notificationContainerRef.current &&
+        !notificationContainerRef.current.contains(event.target as Node)
+      ) {
+        setShowNotifications(false);
+      }
+    };
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setShowNotifications(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("touchstart", handleClickOutside);
+    document.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("touchstart", handleClickOutside);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [showNotifications]);
 
   const [toast, setToast] = useState<{
     show: boolean;
@@ -66,7 +100,75 @@ export default function DashboardHeader() {
     loading,
     markAllAsRead,
     respondToInvitation,
+    deleteNotification,
+    deleteNotifications,
+    deleteAllNotifications,
   } = useNotifications();
+
+  const [isSelectMode, setIsSelectMode] = useState(false);
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [showConfirmDeleteAll, setShowConfirmDeleteAll] = useState(false);
+
+  // Toggle selection of single notification
+  const handleToggleSelect = (id: string) => {
+    setSelectedIds((prev) =>
+      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id],
+    );
+  };
+
+  // Toggle select all
+  const handleToggleSelectAll = () => {
+    if (selectedIds.length === notifications.length) {
+      setSelectedIds([]);
+    } else {
+      setSelectedIds(notifications.map((n) => n.id));
+    }
+  };
+
+  // Delete single notification
+  const handleDeleteSingle = async (id: string, e?: React.MouseEvent) => {
+    e?.stopPropagation();
+    const success = await deleteNotification(id);
+    if (success) {
+      setToast({
+        show: true,
+        message: "Notifikasi berhasil dihapus",
+        type: "success",
+      });
+      setSelectedIds((prev) => prev.filter((item) => item !== id));
+    }
+  };
+
+  // Delete selected notifications
+  const handleDeleteSelected = async () => {
+    if (selectedIds.length === 0) return;
+    const count = selectedIds.length;
+    const success = await deleteNotifications(selectedIds);
+    if (success) {
+      setToast({
+        show: true,
+        message: `${count} notifikasi berhasil dihapus`,
+        type: "success",
+      });
+      setSelectedIds([]);
+      setIsSelectMode(false);
+    }
+  };
+
+  // Delete all notifications
+  const handleDeleteAll = async () => {
+    const success = await deleteAllNotifications();
+    if (success) {
+      setToast({
+        show: true,
+        message: "Semua notifikasi berhasil dihapus",
+        type: "success",
+      });
+      setShowConfirmDeleteAll(false);
+      setSelectedIds([]);
+      setIsSelectMode(false);
+    }
+  };
 
   const { data: session } = useSession({
     required: true,
@@ -178,13 +280,56 @@ export default function DashboardHeader() {
       n.status === "rejected",
   );
 
+  const socketContext = useSocket();
+  const socket = socketContext?.socket;
+
+  const [currentAvatar, setCurrentAvatar] = useState<string | null>(
+    (session?.user as any)?.avatar || null,
+  );
+
+  // Sync with session if session updates
+  useEffect(() => {
+    if ((session?.user as any)?.avatar) {
+      setCurrentAvatar((session?.user as any).avatar);
+    }
+  }, [(session?.user as any)?.avatar]);
+
+  // Real-time socket & window event listeners for avatar update
+  useEffect(() => {
+    const onSocketAvatarUpdate = (data: { userId: string; avatarUrl: string }) => {
+      if (data.userId === session?.user?.id && data.avatarUrl) {
+        setCurrentAvatar(data.avatarUrl);
+      }
+    };
+
+    if (socket) {
+      socket.on("user:avatar-updated", onSocketAvatarUpdate);
+    }
+
+    const onWindowAvatarUpdate = (e: Event) => {
+      const detail = (e as CustomEvent).detail;
+      if (detail?.userId === session?.user?.id && detail?.avatarUrl) {
+        setCurrentAvatar(detail.avatarUrl);
+      }
+    };
+
+    window.addEventListener("user-avatar-updated", onWindowAvatarUpdate);
+
+    return () => {
+      if (socket) {
+        socket.off("user:avatar-updated", onSocketAvatarUpdate);
+      }
+      window.removeEventListener("user-avatar-updated", onWindowAvatarUpdate);
+    };
+  }, [socket, session?.user?.id]);
+
   const userName = session?.user?.name || "User";
-  const userAvatar = (session?.user as any)?.avatar;
   const displayAvatar =
-    userAvatar ||
+    currentAvatar ||
+    (session?.user as any)?.avatar ||
     `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(userName)}`;
   const userEmail = session?.user?.email || "user@irmaverse.com";
-  const userInitials = userName.substring(0, 2).toUpperCase();
+  const userInitials = userName.trim().charAt(0).toUpperCase() || "U";
 
   return (
     <div className="w-full">
@@ -235,8 +380,25 @@ export default function DashboardHeader() {
 
           {/* --- RIGHT: ACTIONS --- */}
           <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+            {/* Mobile Search Toggle Button */}
+            <button
+              onClick={() => setIsSearchOpen((prev) => !prev)}
+              className={`md:hidden relative h-10 w-10 rounded-xl bg-white border-2 border-slate-200 shadow-[2px_2px_0_0_#cbd5e1] hover:border-emerald-400 hover:shadow-[3px_3px_0_0_#34d399] active:translate-y-0.5 active:shadow-none transition-all inline-flex items-center justify-center outline-none ${
+                isSearchOpen
+                  ? "border-emerald-400 bg-emerald-50 text-emerald-600 shadow-[2px_2px_0_0_#34d399]"
+                  : "text-slate-500 hover:text-emerald-600"
+              }`}
+              aria-label={isSearchOpen ? "Tutup pencarian" : "Buka pencarian"}
+            >
+              {isSearchOpen ? (
+                <X className="h-5 w-5 text-emerald-600" strokeWidth={2.5} />
+              ) : (
+                <Search className="h-5 w-5 text-slate-500 hover:text-emerald-600" strokeWidth={2.5} />
+              )}
+            </button>
+
             {/* Notification Bell */}
-            <div className="relative">
+            <div ref={notificationContainerRef} className="relative z-50">
               <button
                 onClick={handleBellClick}
                 className="relative h-10 w-10 sm:h-11 sm:w-11 rounded-xl bg-white border-2 border-slate-200 shadow-[2px_2px_0_0_#cbd5e1] sm:shadow-[3px_3px_0_0_#cbd5e1] hover:border-emerald-400 hover:shadow-[3px_3px_0_0_#34d399] active:translate-y-0.5 active:shadow-none transition-all inline-flex items-center justify-center outline-none"
@@ -256,39 +418,147 @@ export default function DashboardHeader() {
               {/* Dropdown Notification Panel */}
               {showNotifications && (
                 <>
+                  {/* Backdrop overlay for closing by clicking anywhere outside */}
                   <div
-                    className="fixed left-4 right-4 top-20 z-50 sm:absolute sm:right-0 sm:left-auto sm:top-full sm:mt-2 sm:w-105 sm:rounded-2xl flex flex-col bg-white rounded-2xl border-2 border-slate-200 shadow-[0_4px_20px_rgba(0,0,0,0.15)] max-h-[80vh] sm:max-h-150 overflow-hidden sm:shadow-xl animate-in fade-in-0 zoom-in-95 sm:fade-in-0 sm:zoom-in-100 duration-200"
+                    className="fixed inset-0 z-40 bg-black/5 sm:bg-transparent"
+                    onClick={() => setShowNotifications(false)}
+                    aria-hidden="true"
+                  />
+                  <div
+                    className="fixed left-3 right-3 top-18 z-50 sm:absolute sm:right-0 sm:left-auto sm:top-full sm:mt-2 sm:w-105 sm:rounded-2xl flex flex-col bg-white rounded-2xl border-2 border-slate-200 shadow-[0_8px_30px_rgba(0,0,0,0.18)] max-h-[82vh] sm:max-h-150 overflow-hidden sm:shadow-xl animate-in fade-in-0 zoom-in-95 sm:fade-in-0 sm:zoom-in-100 duration-200"
                   >
                     {/* Header */}
-                    <div className="bg-linear-to-r from-emerald-50 to-teal-50 border-b-2 border-emerald-100 px-5 py-4 flex items-center justify-between shrink-0">
-                      <p className="font-black text-sm text-emerald-800 tracking-wide flex items-center gap-2">
-                        <Bell className="h-4 w-4" /> NOTIFIKASI
-                        {unreadCount > 0 && (
-                          <span className="text-[10px] bg-red-500 text-white px-2 py-0.5 rounded-full font-black">
-                            {unreadCount}
-                          </span>
-                        )}
-                      </p>
-
-                      <div className="flex items-center gap-2">
-                        {unreadCount > 0 && (
+                    {isSelectMode ? (
+                      <div className="bg-linear-to-r from-red-50 to-orange-50 border-b-2 border-red-100 px-3 sm:px-4 py-2.5 sm:py-3 flex items-center justify-between gap-2 shrink-0">
+                        <div className="flex items-center gap-1.5 shrink-0">
                           <button
-                            onClick={markAllAsRead}
-                            className="text-[10px] font-bold text-emerald-600 hover:text-emerald-800 bg-emerald-100 hover:bg-emerald-200 px-2.5 py-1.5 rounded-lg transition-colors flex items-center gap-1"
-                            title="Tandai semua sudah dibaca"
+                            onClick={handleToggleSelectAll}
+                            className="flex items-center gap-1 text-[10px] sm:text-xs font-bold text-slate-700 hover:text-emerald-700 bg-white border border-slate-200 px-2 sm:px-2.5 py-1 sm:py-1.5 rounded-xl shadow-2xs transition-all active:scale-95 whitespace-nowrap"
                           >
-                            <CheckCheck className="h-3 w-3" /> Baca Semua
+                            {selectedIds.length === notifications.length &&
+                            notifications.length > 0 ? (
+                              <CheckSquare className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-emerald-600" />
+                            ) : (
+                              <Square className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-slate-400" />
+                            )}
+                            <span>
+                              {selectedIds.length === notifications.length &&
+                              notifications.length > 0
+                                ? "Batal"
+                                : "Semua"}
+                            </span>
                           </button>
-                        )}
-                        <button
-                          onClick={() => setShowNotifications(false)}
-                          className="h-9 w-9 flex items-center justify-center bg-white text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all border-2 border-slate-200 hover:border-red-200 shadow-sm active:scale-95 shrink-0"
-                          aria-label="Tutup notifikasi"
-                        >
-                          <X className="h-5 w-5" strokeWidth={3} />
-                        </button>
+                          <span className="text-[10px] sm:text-xs font-bold text-slate-500">
+                            {selectedIds.length} dipilih
+                          </span>
+                        </div>
+
+                        <div className="flex items-center gap-1 sm:gap-1.5">
+                          <button
+                            onClick={handleDeleteSelected}
+                            disabled={selectedIds.length === 0}
+                            className="text-[10px] sm:text-xs font-bold text-white bg-red-500 hover:bg-red-600 disabled:opacity-40 disabled:pointer-events-none px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-xl shadow-xs transition-all flex items-center gap-1 active:scale-95 whitespace-nowrap"
+                            title="Hapus notifikasi yang dipilih"
+                          >
+                            <Trash2 className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
+                            <span>Hapus ({selectedIds.length})</span>
+                          </button>
+                          <button
+                            onClick={() => {
+                              setIsSelectMode(false);
+                              setSelectedIds([]);
+                            }}
+                            className="text-[10px] sm:text-xs font-bold text-slate-600 hover:text-slate-800 bg-white border border-slate-200 hover:bg-slate-50 px-2 sm:px-2.5 py-1 sm:py-1.5 rounded-xl transition-all active:scale-95"
+                          >
+                            Selesai
+                          </button>
+                        </div>
                       </div>
-                    </div>
+                    ) : (
+                      <div className="bg-linear-to-r from-emerald-50 to-teal-50 border-b-2 border-emerald-100 px-3 sm:px-4 py-2.5 sm:py-3.5 flex items-center justify-between gap-2 shrink-0">
+                        <div className="flex items-center gap-1.5 shrink-0">
+                          <p className="font-black text-xs sm:text-sm text-emerald-800 tracking-wide flex items-center gap-1.5">
+                            <Bell className="h-3.5 w-3.5 sm:h-4 sm:w-4" /> 
+                            <span className="hidden xs:inline sm:inline">NOTIFIKASI</span>
+                            <span className="xs:hidden sm:hidden">NOTIF</span>
+                            {unreadCount > 0 && (
+                              <span className="text-[9px] sm:text-[10px] bg-red-500 text-white px-1.5 sm:px-2 py-0.5 rounded-full font-black">
+                                {unreadCount}
+                              </span>
+                            )}
+                          </p>
+                        </div>
+
+                        <div className="flex items-center gap-1 sm:gap-1.5 overflow-x-auto no-scrollbar">
+                          {unreadCount > 0 && (
+                            <button
+                              onClick={markAllAsRead}
+                              className="text-[9px] sm:text-[10px] font-bold text-emerald-600 hover:text-emerald-800 bg-emerald-100 hover:bg-emerald-200 px-2 py-1 sm:py-1.5 rounded-lg transition-colors flex items-center gap-1 shrink-0 whitespace-nowrap"
+                              title="Tandai semua sudah dibaca"
+                            >
+                              <CheckCheck className="h-3 w-3 shrink-0" />
+                              <span className="hidden sm:inline">Baca Semua</span>
+                              <span className="sm:hidden">Baca</span>
+                            </button>
+                          )}
+                          {notifications.length > 0 && (
+                            <>
+                              <button
+                                onClick={() => {
+                                  setIsSelectMode(true);
+                                  setSelectedIds([]);
+                                }}
+                                className="text-[9px] sm:text-[10px] font-bold text-slate-600 hover:text-emerald-700 bg-white border border-slate-200 hover:border-emerald-300 px-2 py-1 sm:py-1.5 rounded-lg transition-all flex items-center gap-1 shadow-2xs shrink-0 whitespace-nowrap"
+                                title="Pilih notifikasi untuk dihapus"
+                              >
+                                <CheckSquare className="h-3 w-3 text-slate-500 shrink-0" />
+                                <span>Pilih</span>
+                              </button>
+                              <button
+                                onClick={() => setShowConfirmDeleteAll(true)}
+                                className="text-[9px] sm:text-[10px] font-bold text-red-600 hover:text-red-700 bg-red-50 hover:bg-red-100 border border-red-200 px-2 py-1 sm:py-1.5 rounded-lg transition-all flex items-center gap-1 shadow-2xs shrink-0 whitespace-nowrap"
+                                title="Hapus semua notifikasi"
+                              >
+                                <Trash2 className="h-3 w-3 text-red-500 shrink-0" />
+                                <span className="hidden sm:inline">Hapus Semua</span>
+                                <span className="sm:hidden">Hapus</span>
+                              </button>
+                            </>
+                          )}
+                          <button
+                            onClick={() => setShowNotifications(false)}
+                            className="h-7 w-7 sm:h-8 sm:w-8 flex items-center justify-center bg-white text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all border-2 border-slate-200 hover:border-red-200 shadow-sm active:scale-95 shrink-0 ml-0.5"
+                            aria-label="Tutup notifikasi"
+                          >
+                            <X className="h-3.5 w-3.5 sm:h-4 sm:w-4" strokeWidth={3} />
+                          </button>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Confirm Delete All Banner */}
+                    {showConfirmDeleteAll && (
+                      <div className="bg-red-50 border-b-2 border-red-200 px-4 py-3 flex items-center justify-between gap-2 animate-in fade-in slide-in-from-top-2 duration-150 shrink-0">
+                        <div className="flex items-center gap-2 text-xs font-bold text-red-800">
+                          <Trash2 className="h-4 w-4 text-red-600 shrink-0" />
+                          <span>Hapus semua {notifications.length} notifikasi?</span>
+                        </div>
+                        <div className="flex items-center gap-1.5 shrink-0">
+                          <button
+                            onClick={() => setShowConfirmDeleteAll(false)}
+                            className="px-2.5 py-1 text-xs font-bold text-slate-600 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 transition-all active:scale-95"
+                          >
+                            Batal
+                          </button>
+                          <button
+                            onClick={handleDeleteAll}
+                            className="px-2.5 py-1 text-xs font-bold text-white bg-red-600 rounded-lg hover:bg-red-700 shadow-xs transition-all active:scale-95"
+                          >
+                            Ya, Hapus
+                          </button>
+                        </div>
+                      </div>
+                    )}
 
                     {/* Content - Scrollable */}
                     <div className="overflow-y-auto flex-1 p-3 space-y-3 bg-slate-50/50">
@@ -322,16 +592,54 @@ export default function DashboardHeader() {
                               {invitationNotifs.map((notif) => (
                                 <div
                                   key={notif.id}
-                                  className={`border-2 rounded-2xl p-4 bg-white shadow-sm transition-colors ${notif.status === "unread" ? "border-emerald-300 bg-emerald-50/30" : "border-slate-100"}`}
+                                  onClick={() => {
+                                    if (isSelectMode) {
+                                      handleToggleSelect(notif.id);
+                                    }
+                                  }}
+                                  className={`border-2 rounded-2xl p-4 bg-white shadow-sm transition-all relative ${
+                                    isSelectMode
+                                      ? selectedIds.includes(notif.id)
+                                        ? "border-emerald-400 bg-emerald-50/40 ring-2 ring-emerald-300 cursor-pointer"
+                                        : "cursor-pointer hover:border-slate-300"
+                                      : ""
+                                  } ${notif.status === "unread" ? "border-emerald-300 bg-emerald-50/30" : "border-slate-100"}`}
                                 >
                                   <div className="flex items-start gap-3 mb-3">
-                                    <div className="mt-0.5 p-2 bg-emerald-100 rounded-xl border border-emerald-200 shrink-0">
-                                      <BookOpen className="h-4 w-4 text-emerald-600" />
-                                    </div>
+                                    {isSelectMode ? (
+                                      <div
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          handleToggleSelect(notif.id);
+                                        }}
+                                        className="mt-1 cursor-pointer shrink-0"
+                                      >
+                                        {selectedIds.includes(notif.id) ? (
+                                          <CheckSquare className="h-5 w-5 text-emerald-600" />
+                                        ) : (
+                                          <Square className="h-5 w-5 text-slate-300 hover:text-slate-400" />
+                                        )}
+                                      </div>
+                                    ) : (
+                                      <div className="mt-0.5 p-2 bg-emerald-100 rounded-xl border border-emerald-200 shrink-0">
+                                        <BookOpen className="h-4 w-4 text-emerald-600" />
+                                      </div>
+                                    )}
                                     <div className="flex-1 min-w-0">
-                                      <p className="font-black text-slate-800 text-sm">
-                                        {notif.title}
-                                      </p>
+                                      <div className="flex items-start justify-between gap-2">
+                                        <p className="font-black text-slate-800 text-sm">
+                                          {notif.title}
+                                        </p>
+                                        {!isSelectMode && (
+                                          <button
+                                            onClick={(e) => handleDeleteSingle(notif.id, e)}
+                                            className="h-7 w-7 flex items-center justify-center text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all shrink-0 active:scale-95 -mt-1 -mr-1"
+                                            title="Hapus notifikasi ini"
+                                          >
+                                            <Trash2 className="h-3.5 w-3.5" />
+                                          </button>
+                                        )}
+                                      </div>
                                       <p className="text-xs text-slate-500 mt-1 font-medium leading-relaxed">
                                         {notif.message}
                                       </p>
@@ -436,11 +744,21 @@ export default function DashboardHeader() {
                               {basicNotifs.map((notif) => (
                                 <div
                                   key={notif.id}
-                                  onClick={() => handleNotificationClick(notif)}
-                                  className={`border-2 rounded-2xl p-4 bg-white shadow-sm transition-colors group ${
-                                    notif.actionUrl
-                                      ? "cursor-pointer hover:border-emerald-300"
-                                      : ""
+                                  onClick={() => {
+                                    if (isSelectMode) {
+                                      handleToggleSelect(notif.id);
+                                    } else {
+                                      handleNotificationClick(notif);
+                                    }
+                                  }}
+                                  className={`border-2 rounded-2xl p-4 bg-white shadow-sm transition-all group relative ${
+                                    isSelectMode
+                                      ? selectedIds.includes(notif.id)
+                                        ? "border-emerald-400 bg-emerald-50/40 ring-2 ring-emerald-300 cursor-pointer"
+                                        : "cursor-pointer hover:border-slate-300"
+                                      : notif.actionUrl
+                                        ? "cursor-pointer hover:border-emerald-300"
+                                        : ""
                                   } ${notif.status === "unread" ? "border-emerald-200 bg-emerald-50/20" : "border-slate-100"} ${
                                     notif.status === "accepted"
                                       ? "border-green-200 bg-green-50/20"
@@ -448,26 +766,54 @@ export default function DashboardHeader() {
                                   } ${notif.status === "rejected" ? "border-red-200 bg-red-50/20" : ""}`}
                                 >
                                   <div className="flex items-start gap-3">
-                                    <div className="mt-0.5 p-2 bg-slate-100 rounded-xl border border-slate-200 shrink-0">
-                                      {getNotificationIcon(notif)}
-                                    </div>
+                                    {isSelectMode ? (
+                                      <div
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          handleToggleSelect(notif.id);
+                                        }}
+                                        className="mt-1 cursor-pointer shrink-0"
+                                      >
+                                        {selectedIds.includes(notif.id) ? (
+                                          <CheckSquare className="h-5 w-5 text-emerald-600" />
+                                        ) : (
+                                          <Square className="h-5 w-5 text-slate-300 hover:text-slate-400" />
+                                        )}
+                                      </div>
+                                    ) : (
+                                      <div className="mt-0.5 p-2 bg-slate-100 rounded-xl border border-slate-200 shrink-0">
+                                        {getNotificationIcon(notif)}
+                                      </div>
+                                    )}
                                     <div className="flex-1 min-w-0">
-                                      <div className="flex items-center gap-2">
-                                        <p className="font-black text-slate-800 text-sm truncate">
-                                          {notif.title}
-                                        </p>
-                                        {notif.status === "unread" && (
-                                          <span className="h-2 w-2 rounded-full bg-emerald-500 shrink-0"></span>
-                                        )}
-                                        {notif.status === "accepted" && (
-                                          <span className="text-[9px] font-black text-green-600 bg-green-100 px-1.5 py-0.5 rounded-full shrink-0">
-                                            Diterima
-                                          </span>
-                                        )}
-                                        {notif.status === "rejected" && (
-                                          <span className="text-[9px] font-black text-red-500 bg-red-100 px-1.5 py-0.5 rounded-full shrink-0">
-                                            Ditolak
-                                          </span>
+                                      <div className="flex items-center justify-between gap-2">
+                                        <div className="flex items-center gap-2 min-w-0">
+                                          <p className="font-black text-slate-800 text-sm truncate">
+                                            {notif.title}
+                                          </p>
+                                          {notif.status === "unread" && (
+                                            <span className="h-2 w-2 rounded-full bg-emerald-500 shrink-0"></span>
+                                          )}
+                                          {notif.status === "accepted" && (
+                                            <span className="text-[9px] font-black text-green-600 bg-green-100 px-1.5 py-0.5 rounded-full shrink-0">
+                                              Diterima
+                                            </span>
+                                          )}
+                                          {notif.status === "rejected" && (
+                                            <span className="text-[9px] font-black text-red-500 bg-red-100 px-1.5 py-0.5 rounded-full shrink-0">
+                                              Ditolak
+                                            </span>
+                                          )}
+                                        </div>
+
+                                        {!isSelectMode && (
+                                          <button
+                                            onClick={(e) => handleDeleteSingle(notif.id, e)}
+                                            className="h-7 w-7 flex items-center justify-center text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all shrink-0 active:scale-95 -mt-1 -mr-1"
+                                            title="Hapus notifikasi ini"
+                                          >
+                                            <Trash2 className="h-3.5 w-3.5" />
+                                          </button>
                                         )}
                                       </div>
                                       <p className="text-xs text-slate-500 mt-1 font-medium leading-relaxed line-clamp-2">
@@ -509,8 +855,8 @@ export default function DashboardHeader() {
             {/* Profile Button */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <button className="flex items-center gap-3 h-11 pl-1.5 pr-4 rounded-xl bg-white border-2 border-slate-200 shadow-[3px_3px_0_0_#cbd5e1] hover:border-emerald-400 hover:shadow-[3px_3px_0_0_#34d399] active:translate-y-0.5 active:shadow-none transition-all outline-none group">
-                  <Avatar className="h-8 w-8 border-2 border-slate-200 group-hover:border-emerald-400 transition-colors">
+                <button className="flex items-center gap-2.5 sm:gap-3 h-10 sm:h-11 w-10 sm:w-auto p-1 sm:pl-1.5 sm:pr-4 rounded-xl bg-white border-2 border-slate-200 shadow-[2px_2px_0_0_#cbd5e1] sm:shadow-[3px_3px_0_0_#cbd5e1] hover:border-emerald-400 hover:shadow-[3px_3px_0_0_#34d399] active:translate-y-0.5 active:shadow-none transition-all outline-none justify-center sm:justify-start group">
+                  <Avatar className="h-7.5 w-7.5 sm:h-8 sm:w-8 border-2 border-slate-200 group-hover:border-emerald-400 transition-colors shrink-0">
                     <AvatarImage
                       src={displayAvatar}
                       alt={userName}
@@ -521,7 +867,7 @@ export default function DashboardHeader() {
                     </AvatarFallback>
                   </Avatar>
 
-                  <div className="hidden sm:flex flex-col items-start justify-center text-left">
+                  <div className="hidden sm:flex flex-col items-start justify-center text-left min-w-0">
                     <span className="text-xs font-black text-slate-700 leading-none group-hover:text-emerald-700 truncate max-w-25 mb-0.5">
                       {userName.split(" ")[0]}
                     </span>
@@ -530,7 +876,7 @@ export default function DashboardHeader() {
                     </span>
                   </div>
 
-                  <Settings className="h-4 w-4 text-slate-300 group-hover:text-emerald-400 transition-colors ml-1" />
+                  <Settings className="hidden sm:block h-4 w-4 text-slate-300 group-hover:text-emerald-400 transition-colors ml-1 shrink-0" />
                 </button>
               </DropdownMenuTrigger>
 
@@ -645,45 +991,6 @@ export default function DashboardHeader() {
             </div>
           </div>
         </div>
-
-        {/* Slide Handle Toggle (Mobile Only) */}
-        <button
-          onPointerDown={(e) => {
-            togglePointerRef.current = {
-              x: e.clientX,
-              y: e.clientY,
-              t: Date.now(),
-            };
-          }}
-          onPointerUp={(e) => {
-            const start = togglePointerRef.current;
-            togglePointerRef.current = null;
-            if (!start) return;
-
-            // Guard: ignore accidental tap immediately after navigation
-            if (Date.now() - lastNavAtRef.current < 250) return;
-
-            const dx = Math.abs(e.clientX - start.x);
-            const dy = Math.abs(e.clientY - start.y);
-            const dt = Date.now() - start.t;
-
-            // Only toggle on deliberate tap (not scroll)
-            if (dx <= 8 && dy <= 8 && dt <= 350) {
-              setIsSearchOpen((prev) => !prev);
-            }
-          }}
-          className="md:hidden absolute left-1/2 -translate-x-1/2 bottom-0 translate-y-[calc(100%-2px)] h-8 w-14 bg-white border-2 border-t-0 border-slate-200 rounded-b-2xl shadow-[0_8px_15px_-5px_rgba(0,0,0,0.1)] hover:bg-slate-50 transition-all flex flex-col items-center justify-center group z-50 pointer-events-auto touch-pan-y"
-          aria-label={isSearchOpen ? "Tutup pencarian" : "Buka pencarian"}
-        >
-          {/* Subtle handle line */}
-          <div className="w-6 h-1 bg-slate-100 rounded-full mb-1 sm:mb-1.5 group-hover:bg-emerald-100 transition-colors" />
-          
-          {isSearchOpen ? (
-            <ChevronUp className="h-4 w-4 md:h-5 md:w-5 text-emerald-500 animate-bounce" strokeWidth={3} />
-          ) : (
-            <Search className="h-3.5 w-3.5 md:h-4.5 md:w-4.5 text-slate-400 group-hover:text-emerald-500 transition-colors" strokeWidth={3} />
-          )}
-        </button>
       </div>
     </div>
   );

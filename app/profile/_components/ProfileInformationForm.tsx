@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
 import { useSession } from "next-auth/react";
+import { useSocket } from "@/lib/socket";
 import {
   User,
   Mail,
@@ -32,7 +33,8 @@ interface UserProfile {
 }
 
 const ProfileInformationForm = ({ stats, level, rank, levelTitle }: any) => {
-  const { data: session } = useSession();
+  const { data: session, update: updateSession } = useSession();
+  const socketContext = useSocket();
   const [isEditing, setIsEditing] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
@@ -53,8 +55,6 @@ const ProfileInformationForm = ({ stats, level, rank, levelTitle }: any) => {
     message: string;
     type: "success" | "error";
   } | null>(null);
-
-  const avatarUrl = "https://api.dicebear.com/7.x/avataaars/svg?seed=Fatimah";
 
   // Timer: Hilang otomatis dalam 3 detik
   useEffect(() => {
@@ -89,6 +89,19 @@ const ProfileInformationForm = ({ stats, level, rank, levelTitle }: any) => {
       fetchUserData();
     }
   }, [session?.user?.email]);
+
+  // Sync avatar if updated elsewhere in real time
+  useEffect(() => {
+    const handleAvatarSync = (e: Event) => {
+      const detail = (e as CustomEvent).detail;
+      if (detail?.userId === session?.user?.id && detail?.avatarUrl) {
+        setUser((prev) => (prev ? { ...prev, avatar: detail.avatarUrl } : null));
+        setEditedUser((prev) => (prev ? { ...prev, avatar: detail.avatarUrl } : null));
+      }
+    };
+    window.addEventListener("user-avatar-updated", handleAvatarSync);
+    return () => window.removeEventListener("user-avatar-updated", handleAvatarSync);
+  }, [session?.user?.id]);
 
   // --- HANDLE SAVE TEXT INFO ---
   const handleSave = async () => {
@@ -210,6 +223,38 @@ const ProfileInformationForm = ({ stats, level, rank, levelTitle }: any) => {
         setEditedUser(updatedUser);
       }
 
+      // 1. Emit real-time update via Socket.IO to all clients
+      if (socketContext?.updateAvatar) {
+        socketContext.updateAvatar(data.avatarUrl);
+      } else if (socketContext?.socket && session?.user?.id) {
+        socketContext.socket.emit("user:avatar-update", {
+          userId: session.user.id,
+          avatarUrl: data.avatarUrl,
+        });
+      }
+
+      // 2. Update NextAuth session without reload or logout
+      if (updateSession) {
+        await updateSession({
+          user: {
+            ...session?.user,
+            avatar: data.avatarUrl,
+          },
+        }).catch((err) => console.error("Session update error:", err));
+      }
+
+      // 3. Dispatch local event for 0ms instant UI update across all active components
+      if (typeof window !== "undefined") {
+        window.dispatchEvent(
+          new CustomEvent("user-avatar-updated", {
+            detail: {
+              userId: session?.user?.id,
+              avatarUrl: data.avatarUrl,
+            },
+          })
+        );
+      }
+
       setShowCropDialog(false);
       setSelectedImage(null);
 
@@ -306,12 +351,12 @@ const ProfileInformationForm = ({ stats, level, rank, levelTitle }: any) => {
         <div className="relative shrink-0">
           <Avatar className="h-28 w-28 sm:h-32 sm:w-32 border-4 border-white shadow-xl ring-2 ring-slate-100">
             <AvatarImage
-              src={user.avatar || avatarUrl}
+              src={user.avatar || undefined}
               alt={user.name}
               className="object-cover"
             />
-            <AvatarFallback className="bg-linear-to-br from-emerald-500 to-cyan-500 text-white text-3xl font-bold">
-              {user.name?.substring(0, 2).toUpperCase() || "??"}
+            <AvatarFallback className="bg-linear-to-br from-emerald-500 to-teal-600 text-white text-4xl sm:text-5xl font-black">
+              {user.name?.trim().charAt(0).toUpperCase() || "U"}
             </AvatarFallback>
           </Avatar>
 

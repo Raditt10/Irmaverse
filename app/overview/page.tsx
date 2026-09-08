@@ -34,6 +34,7 @@ import DashboardHeader from "@/components/ui/Header";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Loading from "@/components/ui/Loading";
+import SafeImage from "@/components/ui/SafeImage";
 
 // --- KOMPONEN LEVEL CARD YANG DIPERBARUI ---
 const LevelCardContent = ({
@@ -853,12 +854,11 @@ const Dashboard = () => {
                           className="flex items-center gap-3 p-3 rounded-2xl bg-white border-2 border-slate-100 hover:border-emerald-300 hover:shadow-[0_4px_0_0_#6ee7b7] hover:-translate-y-1 transition-all group cursor-pointer"
                         >
                           <div className="w-12 h-12 rounded-2xl overflow-hidden shrink-0 border-2 border-slate-100 group-hover:border-rose-200 transition-colors">
-                            <img
-                              src={
-                                instructor.avatar ||
-                                `https://api.dicebear.com/7.x/avataaars/svg?seed=${instructor.name}`
-                              }
+                            <SafeImage
+                              src={instructor.avatar}
                               alt={instructor.name}
+                              type="avatar"
+                              name={instructor.name}
                               className="w-full h-full object-cover"
                             />
                           </div>

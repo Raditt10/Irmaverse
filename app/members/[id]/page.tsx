@@ -264,14 +264,11 @@ const MemberDetail = () => {
                   <div className="flex justify-center mb-6">
                     <Avatar className="h-28 w-28 border-4 border-white shadow-xl">
                       <AvatarImage
-                        src={
-                          profile.avatar ||
-                          `https://api.dicebear.com/7.x/avataaars/svg?seed=${profile.name}`
-                        }
+                        src={profile.avatar || undefined}
                         alt={profile.name || "User"}
                       />
                       <AvatarFallback className="bg-emerald-500 text-white font-black text-3xl">
-                        {(profile.name || "U").substring(0, 2).toUpperCase()}
+                        {(profile.name?.trim().charAt(0) || "U").toUpperCase()}
                       </AvatarFallback>
                     </Avatar>
                   </div>

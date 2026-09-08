@@ -859,9 +859,9 @@ const ChatPage = () => {
                     >
                       <div className="relative shrink-0">
                         <Avatar className="h-12 w-12 border-2 border-slate-100">
-                          <AvatarImage src={conv.otherUser.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${conv.otherUser.name}`} />
+                          <AvatarImage src={conv.otherUser.avatar || undefined} />
                           <AvatarFallback className="bg-teal-500 text-white font-black text-lg">
-                            {conv.otherUser.name?.charAt(0).toUpperCase()}
+                            {conv.otherUser.name?.trim().charAt(0).toUpperCase() || "U"}
                           </AvatarFallback>
                         </Avatar>
                         {isParticipantOnline(conv.otherUser.id) && (
@@ -917,9 +917,9 @@ const ChatPage = () => {
                        />
                       <div className="relative">
                         <Avatar className="h-10 w-10 border-2 border-white shadow-sm ring-2 ring-slate-100">
-                          <AvatarImage src={selectedConversation.otherUser.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${selectedConversation.otherUser.name}`} />
+                          <AvatarImage src={selectedConversation.otherUser.avatar || undefined} />
                           <AvatarFallback className="bg-teal-500 text-white font-black text-lg">
-                            {selectedConversation.otherUser.name?.charAt(0).toUpperCase()}
+                            {selectedConversation.otherUser.name?.trim().charAt(0).toUpperCase() || "U"}
                           </AvatarFallback>
                         </Avatar>
                         {isParticipantOnline(selectedConversation.otherUser.id) && (
@@ -1216,8 +1216,8 @@ const ChatPage = () => {
                       >
                         <div className="relative shrink-0">
                           <Avatar className="h-16 w-16 border-[3px] border-white shadow-sm group-hover:border-emerald-100 transition-colors">
-                            <AvatarImage src={inst.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${inst.name}`} />
-                            <AvatarFallback className="bg-teal-500 text-white font-black text-lg">{inst.name.charAt(0).toUpperCase()}</AvatarFallback>
+                            <AvatarImage src={inst.avatar || undefined} />
+                            <AvatarFallback className="bg-teal-500 text-white font-black text-lg">{inst.name?.trim().charAt(0).toUpperCase() || "U"}</AvatarFallback>
                           </Avatar>
                           <div className={`absolute -bottom-1 -right-1 w-6 h-6 bg-white rounded-full flex items-center justify-center shadow-sm`}>
                             <div className={`w-3.5 h-3.5 rounded-full ${onlineUsers.has(inst.id) ? 'bg-emerald-400 animate-pulse' : 'bg-slate-300'}`} />

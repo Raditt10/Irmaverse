@@ -32,6 +32,7 @@ import DashboardHeader from "@/components/ui/Header";
 import Sidebar from "@/components/ui/Sidebar";
 import ProfileInformationForm from "./_components/ProfileInformationForm";
 import Loading from "@/components/ui/Loading";
+import SafeImage from "@/components/ui/SafeImage";
 
 interface GamificationData {
   stats: {
@@ -626,18 +627,15 @@ const Profile = () => {
                             <div className="bg-white rounded-3xl border-2 border-slate-200 p-4 shadow-sm hover:border-teal-400 hover:shadow-[0_4px_0_0_#34d399] active:translate-y-0.5 active:shadow-none transition-all duration-200 flex items-center gap-4 cursor-pointer overflow-hidden">
                               {/* Thumbnail Container */}
                               <div className="relative h-20 w-20 sm:h-24 sm:w-24 shrink-0 rounded-2xl overflow-hidden border-2 border-slate-100 bg-slate-50 group-hover:border-teal-200 transition-colors">
-                                {enrollment.program.thumbnailUrl ? (
-                                  <img
-                                    src={enrollment.program.thumbnailUrl}
-                                    alt={enrollment.program.title}
-                                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                                  />
-                                ) : (
-                                  <div className="w-full h-full flex items-center justify-center bg-teal-50">
-                                    <GraduationCap className="h-8 w-8 text-teal-200" />
-                                  </div>
-                                )}
-                                <div className="absolute inset-0 bg-linear-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                                <SafeImage
+                                  src={enrollment.program.thumbnailUrl}
+                                  alt={enrollment.program.title}
+                                  fallbackType="thumbnail"
+                                  contentType="program"
+                                  fallbackName={enrollment.program.title}
+                                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                                />
+                                <div className="absolute inset-0 bg-linear-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
                               </div>
 
                               {/* Content */}
@@ -719,17 +717,14 @@ const Profile = () => {
                           >
                             {/* Thumbnail */}
                             <div className="relative h-20 w-20 shrink-0 rounded-2xl overflow-hidden border-2 border-slate-100 bg-slate-50 group-hover:border-emerald-200 transition-colors">
-                              {enrollment.program.thumbnailUrl ? (
-                                <img
-                                  src={enrollment.program.thumbnailUrl}
-                                  alt={enrollment.program.title}
-                                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                                />
-                              ) : (
-                                <div className="w-full h-full flex items-center justify-center bg-emerald-50">
-                                  <GraduationCap className="h-8 w-8 text-emerald-200" />
-                                </div>
-                              )}
+                              <SafeImage
+                                src={enrollment.program.thumbnailUrl}
+                                alt={enrollment.program.title}
+                                fallbackType="thumbnail"
+                                contentType="program"
+                                fallbackName={enrollment.program.title}
+                                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                              />
                             </div>
 
                             {/* Content */}

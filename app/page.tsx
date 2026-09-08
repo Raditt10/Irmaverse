@@ -306,7 +306,7 @@ export default function Home() {
         }}
       />
 
-      <div className="relative w-full">
+      <div className="relative w-full z-40">
         {/* Top Info Bar */}
         <div className="flex items-center justify-between py-2 sm:py-4 px-3 sm:px-6 lg:px-8 text-sm text-white/80 max-w-7xl mx-auto">
           <div className="flex items-center gap-1.5 sm:gap-2">

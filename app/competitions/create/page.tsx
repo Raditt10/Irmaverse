@@ -665,6 +665,7 @@ const CreateCompetition = () => {
                       type="file"
                       accept="image/*"
                       onChange={handleImageUpload}
+                      disabled={uploadingImage}
                       className="hidden"
                       id="upload-comp"
                     />
@@ -685,14 +686,24 @@ const CreateCompetition = () => {
                     ) : (
                       <label
                         htmlFor="upload-comp"
-                        className="flex flex-col items-center justify-center w-full h-40 lg:h-48 rounded-2xl lg:rounded-3xl border-2 border-dashed border-slate-300 bg-slate-50 hover:bg-teal-50 hover:border-teal-400 transition-all cursor-pointer"
+                        className={`flex flex-col items-center justify-center w-full h-40 lg:h-48 rounded-2xl lg:rounded-3xl border-2 border-dashed border-slate-300 bg-slate-50 hover:border-teal-400 hover:bg-teal-50 transition-all cursor-pointer ${
+                          uploadingImage ? "opacity-50 pointer-events-none" : ""
+                        }`}
                       >
                         {uploadingImage ? (
-                          <Sparkles className="w-6 h-6 lg:w-8 lg:h-8 text-teal-400 animate-spin" />
+                          <svg className="animate-spin -ml-1 mr-3 h-6 w-6 lg:h-8 lg:w-8 text-teal-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                          </svg>
                         ) : (
                           <>
-                            <Upload className="w-6 h-6 lg:w-8 lg:h-8 text-emerald-500 mb-2 group-hover:text-emerald-600" />
-                            <span className="text-xs lg:text-sm font-bold text-slate-400">Klik untuk Upload</span>
+                            <Upload className="w-6 h-6 lg:w-8 lg:h-8 text-emerald-500 mb-2 group-hover:text-emerald-600 transition-colors" />
+                            <span className="text-xs lg:text-sm font-bold text-slate-400 group-hover:text-teal-500 transition-colors">
+                              Klik untuk Upload Thumbnail
+                            </span>
+                            <span className="text-[10px] sm:text-xs text-slate-400 font-medium mt-1">
+                              JPG, PNG, WebP (Max 5MB)
+                            </span>
                           </>
                         )}
                       </label>

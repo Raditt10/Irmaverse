@@ -287,3 +287,62 @@ export async function POST(req: NextRequest) {
     );
   }
 }
+
+/**
+ * DELETE /api/notifications
+ * Delete single, multiple, or all notifications for the authenticated user.
+ * Body:
+ *   - all: boolean (if true, deletes all notifications of current user)
+ *   - id: string (deletes single notification)
+ *   - ids: string[] (deletes multiple notifications)
+ */
+export async function DELETE(req: NextRequest) {
+  try {
+    const session = await auth();
+
+    if (!session?.user?.id) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const body = await req.json().catch(() => ({}));
+    const { id, ids, all } = body;
+
+    if (all === true) {
+      const result = await prisma.notifications.deleteMany({
+        where: { userId: session.user.id },
+      });
+      return NextResponse.json({ success: true, count: result.count });
+    }
+
+    if (ids && Array.isArray(ids) && ids.length > 0) {
+      const result = await prisma.notifications.deleteMany({
+        where: {
+          userId: session.user.id,
+          id: { in: ids },
+        },
+      });
+      return NextResponse.json({ success: true, count: result.count });
+    }
+
+    if (id && typeof id === "string") {
+      const result = await prisma.notifications.deleteMany({
+        where: {
+          userId: session.user.id,
+          id,
+        },
+      });
+      return NextResponse.json({ success: true, count: result.count });
+    }
+
+    return NextResponse.json(
+      { error: "Parameter id, ids, atau all diperlukan" },
+      { status: 400 },
+    );
+  } catch (error) {
+    console.error("[DELETE /api/notifications] Error:", error);
+    return NextResponse.json(
+      { error: "Gagal menghapus notifikasi" },
+      { status: 500 },
+    );
+  }
+}

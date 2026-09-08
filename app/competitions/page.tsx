@@ -13,6 +13,7 @@ import DetailButton from "@/components/ui/DetailButton";
 import Toast from "@/components/ui/Toast";
 import AddButton from "@/components/ui/AddButton";
 import PageBanner from "@/components/ui/PageBanner";
+import SafeImage from "@/components/ui/SafeImage";
 
 interface CompetitionItem {
   id: string;
@@ -181,12 +182,15 @@ const Competitions = () => {
                     >
                       {/* Image Section */}
                       <div className="relative h-40 md:h-52 border-b-2 border-slate-100 overflow-hidden">
-                        <img
+                        <SafeImage
                           src={item.image}
                           alt={item.title}
+                          fallbackType="thumbnail"
+                          contentType="lomba"
+                          fallbackName={item.title}
                           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                         />
-                        <div className="absolute inset-0 bg-linear-to-t from-black/60 to-transparent" />
+                        <div className="absolute inset-0 bg-linear-to-t from-black/60 to-transparent pointer-events-none" />
 
                         {/* Category Badge - Floating */}
                         <div className="absolute top-4 right-4 px-3 py-1 rounded-full flex items-center gap-1.5 border-2 shadow-sm bg-white/90 border-white/80">

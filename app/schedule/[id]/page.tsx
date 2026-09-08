@@ -26,6 +26,7 @@ import {
   MessageCircle
 } from "lucide-react";
 import Image from "next/image";
+import SafeImage from "@/components/ui/SafeImage";
 
 interface Schedule {
   id: string;
@@ -91,11 +92,9 @@ const ScheduleDetail = () => {
           : data.status === "ongoing" 
           ? "Sedang berlangsung" 
           : "Kegiatan telah selesai",
-        pemateriAvatar: data.instructor?.name 
-          ? `https://api.dicebear.com/7.x/avataaars/svg?seed=${data.instructor.name}`
-          : null,
+        pemateriAvatar: data.instructor?.avatar || null,
         pemateriSpecialization: data.instructor?.bidangKeahlian || "Instruktur",
-        image: data.thumbnailUrl || `https://picsum.photos/seed/event${data.id}/800/400`,
+        image: data.thumbnailUrl || null,
       };
       
       setSchedule(mappedSchedule);
@@ -226,12 +225,15 @@ const ScheduleDetail = () => {
             {/* --- HERO SECTION --- */}
             <div className="bg-white rounded-3xl md:rounded-[2.5rem] overflow-hidden border-2 border-slate-200 shadow-[4px_4px_0_0_#cbd5e1] md:shadow-[8px_8px_0_0_#cbd5e1] group">
               <div className="relative h-64 sm:h-80 md:h-96 w-full overflow-hidden">
-                <img
-                  src={schedule.image || "https://picsum.photos/seed/event1/1200/600"}
+                <SafeImage
+                  src={schedule.image}
                   alt={schedule.title}
+                  fallbackType="thumbnail"
+                  contentType="kegiatan"
+                  fallbackName={schedule.title}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                 />
-                <div className="absolute inset-0 bg-linear-to-t from-slate-900/90 via-slate-900/40 to-transparent" />
+                <div className="absolute inset-0 bg-linear-to-t from-slate-900/90 via-slate-900/40 to-transparent pointer-events-none" />
                 
                 <div className="absolute bottom-0 left-0 right-0 p-5 sm:p-8 md:p-10">
                   <div className="mb-3 md:mb-4">
@@ -254,57 +256,60 @@ const ScheduleDetail = () => {
               <div className="lg:col-span-2 space-y-6 md:space-y-8">
                 
                 {/* Info Cards Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div className="bg-white p-4 rounded-3xl border-2 border-slate-200 shadow-sm flex items-center gap-4 hover:-translate-y-1 transition-transform">
-                        <div className="w-12 h-12 shrink-0 rounded-full bg-emerald-50 flex items-center justify-center border-2 border-emerald-100">
-                            <Calendar className="h-6 w-6 text-emerald-500" strokeWidth={2.5} />
-                        </div>
-                        <div className="flex flex-col flex-1 overflow-hidden">
-                           <span className="text-[10px] sm:text-xs text-slate-400 font-bold uppercase tracking-wider mb-0.5">Tanggal</span>
-                           <span className="text-slate-800 font-black text-sm md:text-base truncate">
-                               {new Date(schedule.date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
-                           </span>
-                        </div>
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
+                  {/* Tanggal - Persegi di Mobile */}
+                  <div className="bg-white p-3.5 sm:p-4 rounded-2xl sm:rounded-3xl border-2 border-slate-200 shadow-sm flex flex-col justify-between min-h-[115px] md:min-h-0 md:flex-row md:items-center md:gap-4 hover:-translate-y-1 transition-transform">
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 shrink-0 rounded-2xl sm:rounded-full bg-emerald-50 flex items-center justify-center border-2 border-emerald-100">
+                      <Calendar className="h-5 w-5 sm:h-6 sm:w-6 text-emerald-500" strokeWidth={2.5} />
                     </div>
+                    <div className="flex flex-col flex-1 overflow-hidden min-w-0 mt-2 md:mt-0">
+                      <span className="text-[10px] sm:text-xs text-slate-400 font-bold uppercase tracking-wider mb-0.5">Tanggal</span>
+                      <span className="text-slate-800 font-black text-xs sm:text-sm md:text-base truncate leading-tight">
+                        {new Date(schedule.date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
+                      </span>
+                    </div>
+                  </div>
 
-                    {schedule.time && (
-                        <div className="bg-white p-4 rounded-3xl border-2 border-slate-200 shadow-sm flex items-center gap-4 hover:-translate-y-1 transition-transform">
-                            <div className="w-12 h-12 shrink-0 rounded-full bg-emerald-50 flex items-center justify-center border-2 border-emerald-100">
-                                <Clock className="h-6 w-6 text-emerald-500" strokeWidth={2.5} />
-                            </div>
-                            <div className="flex flex-col flex-1 overflow-hidden">
-                                <span className="text-[10px] sm:text-xs text-slate-400 font-bold uppercase tracking-wider mb-0.5">Waktu</span>
-                                <span className="text-slate-800 font-black text-sm md:text-base truncate">{schedule.time} WIB</span>
-                            </div>
-                        </div>
-                    )}
+                  {/* Waktu - Persegi di Mobile */}
+                  {schedule.time && (
+                    <div className="bg-white p-3.5 sm:p-4 rounded-2xl sm:rounded-3xl border-2 border-slate-200 shadow-sm flex flex-col justify-between min-h-[115px] md:min-h-0 md:flex-row md:items-center md:gap-4 hover:-translate-y-1 transition-transform">
+                      <div className="w-10 h-10 sm:w-12 sm:h-12 shrink-0 rounded-2xl sm:rounded-full bg-emerald-50 flex items-center justify-center border-2 border-emerald-100">
+                        <Clock className="h-5 w-5 sm:h-6 sm:w-6 text-emerald-500" strokeWidth={2.5} />
+                      </div>
+                      <div className="flex flex-col flex-1 overflow-hidden min-w-0 mt-2 md:mt-0">
+                        <span className="text-[10px] sm:text-xs text-slate-400 font-bold uppercase tracking-wider mb-0.5">Waktu</span>
+                        <span className="text-slate-800 font-black text-xs sm:text-sm md:text-base truncate leading-tight">{schedule.time} WIB</span>
+                      </div>
+                    </div>
+                  )}
 
-                    {schedule.location && (
-                        <div className="bg-white p-4 rounded-3xl border-2 border-slate-200 shadow-sm flex items-center gap-4 hover:-translate-y-1 transition-transform">
-                            <div className="w-12 h-12 shrink-0 rounded-full bg-emerald-50 flex items-center justify-center border-2 border-emerald-100">
-                                <MapPin className="h-6 w-6 text-emerald-500" strokeWidth={2.5} />
-                            </div>
-                            <div className="flex flex-col flex-1 overflow-hidden">
-                                <span className="text-[10px] sm:text-xs text-slate-400 font-bold uppercase tracking-wider mb-0.5">Lokasi</span>
-                                <span className="text-slate-800 font-black text-sm md:text-base truncate">{schedule.location}</span>
-                            </div>
-                        </div>
-                    )}
+                  {/* Lokasi - Full width di baris kedua Mobile */}
+                  {schedule.location && (
+                    <div className="col-span-2 md:col-span-1 bg-white p-3.5 sm:p-4 rounded-2xl sm:rounded-3xl border-2 border-slate-200 shadow-sm flex items-center gap-3.5 sm:gap-4 hover:-translate-y-1 transition-transform">
+                      <div className="w-10 h-10 sm:w-12 sm:h-12 shrink-0 rounded-2xl sm:rounded-full bg-emerald-50 flex items-center justify-center border-2 border-emerald-100">
+                        <MapPin className="h-5 w-5 sm:h-6 sm:w-6 text-emerald-500" strokeWidth={2.5} />
+                      </div>
+                      <div className="flex flex-col flex-1 overflow-hidden min-w-0">
+                        <span className="text-[10px] sm:text-xs text-slate-400 font-bold uppercase tracking-wider mb-0.5">Lokasi</span>
+                        <span className="text-slate-800 font-black text-xs sm:text-sm md:text-base truncate">{schedule.location}</span>
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 {/* Full Description */}
                 {schedule.fullDescription && (
-                  <div className="bg-white p-5 md:p-8 rounded-3xl md:rounded-[2.5rem] border-2 border-slate-200 shadow-[4px_4px_0_0_#cbd5e1] md:shadow-[6px_6px_0_0_#cbd5e1]">
+                  <div className="bg-white p-5 sm:p-8 rounded-2xl sm:rounded-3xl md:rounded-[2.5rem] border-2 border-slate-200 shadow-[4px_4px_0_0_#cbd5e1] md:shadow-[6px_6px_0_0_#cbd5e1]">
                     <div className="flex items-center gap-3 mb-4 md:mb-6">
-                        <div className="w-10 h-10 md:w-14 md:h-14 bg-emerald-100 rounded-2xl flex items-center justify-center border-4 border-emerald-200">
-                            <Info className="h-5 w-5 md:h-7 md:w-7 text-emerald-600" strokeWidth={3} />
-                        </div>
-                        <h3 className="text-lg md:text-2xl font-black text-slate-800">Deskripsi Kegiatan</h3>
+                      <div className="w-10 h-10 sm:w-12 sm:h-12 bg-emerald-100 rounded-xl sm:rounded-2xl flex items-center justify-center border-2 sm:border-4 border-emerald-200 shrink-0">
+                        <Info className="h-5 w-5 sm:h-6 sm:w-6 text-emerald-600" strokeWidth={3} />
+                      </div>
+                      <h3 className="text-lg sm:text-xl md:text-2xl font-black text-slate-800">Deskripsi Kegiatan</h3>
                     </div>
                     <div className="prose prose-slate max-w-none">
-                        <p className="text-slate-600 font-medium leading-relaxed text-sm md:text-lg whitespace-pre-line text-justify md:text-left wrap-break-word">
-                            {schedule.fullDescription}
-                        </p>
+                      <p className="text-slate-600 font-medium leading-relaxed text-sm md:text-lg whitespace-pre-line text-justify md:text-left wrap-break-word">
+                        {schedule.fullDescription}
+                      </p>
                     </div>
                   </div>
                 )}
@@ -314,20 +319,16 @@ const ScheduleDetail = () => {
               <div className="space-y-6 md:space-y-8">
                 
                 {/* Uploader / Contact Person Card */}
-                <div className="bg-white rounded-[45px] border-4 border-slate-200 shadow-[0_10px_0_0_#cbd5e1] overflow-hidden p-8 flex flex-col items-center relative">
+                <div className="bg-white rounded-3xl md:rounded-[45px] border-2 md:border-4 border-slate-200 shadow-[0_6px_0_0_#cbd5e1] md:shadow-[0_10px_0_0_#cbd5e1] overflow-hidden p-6 sm:p-8 flex flex-col items-center relative">
                   <div className="relative mb-6">
                     <div className="w-32 h-32 bg-teal-500 rounded-full border-4 border-white shadow-xl overflow-hidden">
-                      {schedule.pemateriAvatar && schedule.pemateriAvatar.includes("avatar") && !schedule.pemateriAvatar.includes("dicebear") ? (
-                        <img
-                          src={schedule.pemateriAvatar}
-                          alt={schedule.pemateri || "Narahubung"}
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center text-white">
-                          <Contact className="h-16 w-16" strokeWidth={2.5} />
-                        </div>
-                      )}
+                      <SafeImage
+                        src={schedule.pemateriAvatar}
+                        alt={schedule.pemateri || "Narahubung"}
+                        type="avatar"
+                        name={schedule.pemateri || "N"}
+                        className="w-full h-full object-cover"
+                      />
                     </div>
                   </div>
 

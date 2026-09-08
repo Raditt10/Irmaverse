@@ -21,6 +21,7 @@ import {
   Users
 } from "lucide-react";
 import PageBanner from "@/components/ui/PageBanner";
+import SafeImage from "@/components/ui/SafeImage";
 
 interface Member {
   id: string;
@@ -63,6 +64,22 @@ const Members = () => {
     fetchMembers();
   }, []);
 
+  useEffect(() => {
+    const handleAvatarUpdate = (e: Event) => {
+      const detail = (e as CustomEvent).detail;
+      if (detail?.userId && detail?.avatarUrl) {
+        setMembers((prev) =>
+          prev.map((m) =>
+            m.id === detail.userId ? { ...m, avatar: detail.avatarUrl } : m,
+          ),
+        );
+      }
+    };
+    window.addEventListener("user-avatar-updated", handleAvatarUpdate);
+    return () =>
+      window.removeEventListener("user-avatar-updated", handleAvatarUpdate);
+  }, []);
+
   const fetchMembers = async () => {
     try {
       const res = await fetch("/api/members");
@@ -73,7 +90,7 @@ const Members = () => {
         name: u.name || "-",
         role: u.role || "-",
         class: u.class || "-",
-        avatar: u.avatar || "https://api.dicebear.com/7.x/avataaars/svg?seed=" + (u.name || "user"),
+        avatar: u.avatar || null,
         points: u.points || 0,
         isMutual: u.isMutual || false,
         jabatan: u.jabatan || null,
@@ -161,10 +178,13 @@ const Members = () => {
                             {/* Avatar Wrapper (Tanpa Badge Status) */}
                             <div className="relative mb-2 md:mb-3 group-hover:scale-105 transition-transform duration-500">
                                 <div className="w-16 h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 rounded-full p-1 bg-white border-[3px] md:border-4 border-slate-100 shadow-md overflow-hidden">
-                                    <img
+                                    <SafeImage
                                         src={member.avatar}
                                         alt={member.name}
-                                        className="w-full h-full object-cover rounded-full bg-slate-50"
+                                        fallbackType="avatar"
+                                        fallbackName={member.name}
+                                        className="w-full h-full object-cover rounded-full"
+                                        fallbackClassName="w-full h-full rounded-full bg-emerald-100 text-emerald-700 text-lg md:text-2xl font-black flex items-center justify-center"
                                     />
                                 </div>
                             </div>

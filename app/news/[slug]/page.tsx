@@ -10,6 +10,7 @@ import Link from "next/link";
 import ReactMarkdown from "react-markdown";
 import Loading from "@/components/ui/Loading";
 import Toast from "@/components/ui/Toast";
+import SafeImage from "@/components/ui/SafeImage";
 import { Newspaper } from "lucide-react";
 
 interface NewsDetail {
@@ -169,15 +170,16 @@ export default function NewsDetailPage() {
             {/* Article Container */}
             <article className="bg-white rounded-3xl shadow-lg overflow-hidden">
               {/* Header Image */}
-              {news.image && (
-                <div className="w-full h-96 overflow-hidden">
-                  <img
-                    src={news.image}
-                    alt={news.title}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-              )}
+              <div className="w-full h-72 sm:h-96 overflow-hidden">
+                <SafeImage
+                  src={news.image}
+                  alt={news.title}
+                  fallbackType="thumbnail"
+                  contentType="berita"
+                  fallbackName={news.title}
+                  className="w-full h-full object-cover"
+                />
+              </div>
 
               {/* Content */}
               <div className="p-8 lg:p-12">

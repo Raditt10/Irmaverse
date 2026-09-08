@@ -41,9 +41,7 @@ const getRoleLabel = (role: string) => {
   return "Anggota";
 };
 
-const avatarSrc = (u: LeaderboardUser) =>
-  u.avatar ||
-  `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(u.name ?? "user")}`;
+const avatarSrc = (u: LeaderboardUser) => u.avatar || undefined;
 
 export default function LeaderboardClient({ users, currentUserId, currentUserRole }: Props) {
   const router = useRouter();

@@ -34,7 +34,7 @@ export async function GET() {
               }),
           prize: comp.prize || "TBA",
           category: comp.category,
-          image: comp.thumbnailUrl || "https://images.unsplash.com/photo-1526080652727-5b77f74df6c5?auto=format&fit=crop&w=1000&q=80",
+          image: comp.thumbnailUrl || null,
           instructor: comp.users ? {
             id: comp.users.id,
             name: comp.users.name || "Instructor",

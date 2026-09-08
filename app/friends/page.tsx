@@ -291,14 +291,11 @@ export default function FriendsPage() {
                     <div className="relative group-hover:scale-105 transition-transform duration-500">
                       <Avatar className="h-20 w-20 md:h-24 md:w-24 border-4 border-slate-50 shadow-md">
                         <AvatarImage
-                          src={
-                            user.avatar ||
-                            `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.name}`
-                          }
+                          src={user.avatar || undefined}
                           alt={user.name || "User"}
                         />
                         <AvatarFallback className="bg-emerald-500 text-white font-black text-2xl">
-                          {(user.name || "U").substring(0, 2).toUpperCase()}
+                          {(user.name?.trim().charAt(0) || "U").toUpperCase()}
                         </AvatarFallback>
                       </Avatar>
                     </div>

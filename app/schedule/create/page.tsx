@@ -366,6 +366,7 @@ const CreateSchedule = () => {
                       accept="image/*"
                       onChange={handleImageUpload}
                       disabled={uploading}
+                      className="hidden"
                       id="upload-thumb"
                     />
                     {formData.thumbnailUrl ? (

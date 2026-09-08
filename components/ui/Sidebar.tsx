@@ -13,6 +13,7 @@ import {
   Newspaper,
   Menu,
   PanelLeftClose,
+  PanelLeftOpen,
   X,
   MessageCircle,
   HelpCircle,
@@ -197,11 +198,6 @@ const Sidebar = () => {
                 path: "/materials",
               },
               {
-                icon: BarChart3,
-                label: "Perkembangan Kajian",
-                path: "/materials/progress",
-              },
-              {
                 icon: BookMarked,
                 label: "Kelola Rekapan Materi",
                 path: "/materials/rekapan",
@@ -368,6 +364,23 @@ const Sidebar = () => {
       : []),
   ];
 
+  // Auto-expand submenu if current route matches one of its items
+  useEffect(() => {
+    menuItems.forEach((item) => {
+      if (
+        item.id &&
+        item.submenu?.some(
+          (sub) =>
+            sub.path &&
+            (pathname === sub.path ||
+              (sub.path !== "/" && pathname.startsWith(sub.path))),
+        )
+      ) {
+        setExpandedSubmenus((prev) => ({ ...prev, [item.id!]: true }));
+      }
+    });
+  }, [pathname]);
+
   return (
     <>
       <style>{scrollbarStyles}</style>
@@ -383,11 +396,19 @@ const Sidebar = () => {
         className={`hidden lg:flex flex-col fixed top-20 bottom-0 left-0 z-40 bg-white border-r-2 border-slate-100 transition-all duration-300 ${isExpanded ? "w-72" : "w-24"}`}
       >
         {/* Toggle Button */}
-        <div className="px-6 pt-6 pb-2">
+        <div className="px-4 pt-6 pb-2">
           <button
             onClick={() => setIsExpanded(!isExpanded)}
-            className="flex items-center justify-center p-3 rounded-xl text-slate-400 hover:text-teal-600 hover:bg-teal-50 transition-all duration-300 w-full border-2 border-transparent hover:border-teal-100"
-            title={isExpanded ? "Persempit Sidebar" : "Perlebar Sidebar"}
+            className={`
+              flex items-center justify-center rounded-2xl transition-all duration-300 w-full border-2
+              ${
+                isExpanded
+                  ? "p-3 text-slate-400 hover:text-teal-600 hover:bg-teal-50 border-transparent hover:border-teal-100"
+                  : "h-12 w-12 mx-auto text-teal-600 bg-teal-50/80 border-teal-200/80 shadow-[2px_2px_0_0_#99f6e4] hover:bg-teal-100 hover:border-teal-400 hover:shadow-[3px_3px_0_0_#14b8a6] active:translate-y-0.5 active:shadow-none"
+              }
+            `}
+            title={isExpanded ? "Persempit Sidebar" : "Buka / Perlebar Sidebar"}
+            aria-label={isExpanded ? "Persempit Sidebar" : "Buka / Perlebar Sidebar"}
           >
             {isExpanded ? (
               <div className="flex items-center gap-2 w-full">
@@ -397,7 +418,7 @@ const Sidebar = () => {
                 </span>
               </div>
             ) : (
-              <Menu className="h-6 w-6 stroke-[2.5]" />
+              <PanelLeftOpen className="h-6 w-6 stroke-[2.5]" />
             )}
           </button>
         </div>
@@ -406,39 +427,77 @@ const Sidebar = () => {
         <div className="flex-1 overflow-y-auto sidebar-scrollbar px-4 pb-8 space-y-1">
           {menuItems.map((item: MenuItem, idx) => {
             const IconComponent = item.icon;
-            const isActive = pathname === item.path;
             const hasSubmenu = item.submenu && item.submenu.length > 0;
             const isSubmenuOpen = item.id && expandedSubmenus[item.id];
+            const isSubActiveAny =
+              hasSubmenu &&
+              item.submenu?.some(
+                (sub: any) =>
+                  pathname === sub.path ||
+                  (sub.path !== "/" && pathname.startsWith(sub.path)),
+              );
+            const isItemActive =
+              pathname === item.path || (!isExpanded && isSubActiveAny);
+            const isParentHighlighted =
+              isExpanded && hasSubmenu && isSubActiveAny;
 
             return (
-              <div key={idx} className="mb-1">
+              <div key={idx} className="mb-1 relative group">
                 <button
                   onClick={() => {
-                    if (hasSubmenu) {
-                      toggleSubmenu(item.id!);
-                    } else if (item.path) {
-                      router.push(item.path);
+                    if (!isExpanded) {
+                      if (hasSubmenu) {
+                        setIsExpanded(true);
+                        if (item.id) {
+                          setExpandedSubmenus((prev) => ({
+                            ...prev,
+                            [item.id!]: true,
+                          }));
+                        }
+                      } else if (item.path) {
+                        router.push(item.path);
+                      }
+                    } else {
+                      if (hasSubmenu) {
+                        toggleSubmenu(item.id!);
+                      } else if (item.path) {
+                        router.push(item.path);
+                      }
                     }
                   }}
                   className={`
-                    w-full flex items-center gap-3 px-4 py-3.5 rounded-2xl transition-all duration-200 group relative overflow-hidden
+                    w-full flex items-center gap-3 px-4 py-3.5 rounded-2xl transition-all duration-200 relative overflow-hidden
                     ${
-                      isActive && !hasSubmenu
+                      isItemActive
                         ? "bg-linear-to-r from-teal-400 to-emerald-500 text-white shadow-lg shadow-teal-200/50 translate-x-1"
-                        : "text-slate-500 hover:bg-slate-50 hover:text-teal-600"
+                        : isParentHighlighted
+                          ? "text-teal-700 bg-teal-50/70 font-bold"
+                          : "text-slate-500 hover:bg-slate-50 hover:text-teal-600"
                     } 
                     ${!isExpanded && "justify-center px-0"}
                   `}
-                  title={!isExpanded ? item.label : ""}
+                  title={
+                    !isExpanded
+                      ? hasSubmenu
+                        ? `${item.label} (Buka Menu)`
+                        : item.label
+                      : ""
+                  }
                 >
                   <IconComponent
-                    className={`h-[1.35rem] w-[1.35rem] shrink-0 stroke-[2.5] transition-colors ${isActive && !hasSubmenu ? "text-white" : "group-hover:text-teal-500"}`}
+                    className={`h-[1.35rem] w-[1.35rem] shrink-0 stroke-[2.5] transition-colors ${
+                      isItemActive
+                        ? "text-white"
+                        : isParentHighlighted
+                          ? "text-teal-600"
+                          : "group-hover:text-teal-500"
+                    }`}
                   />
 
                   {isExpanded && (
                     <>
                       <span
-                        className={`text-sm font-bold flex-1 text-left ${isActive && !hasSubmenu ? "font-black" : ""}`}
+                        className={`text-sm font-bold flex-1 text-left ${isItemActive ? "font-black" : ""}`}
                       >
                         {item.label}
                       </span>
@@ -450,7 +509,8 @@ const Sidebar = () => {
                     </>
                   )}
                 </button>
-                {/* Submenu Desktop */}
+
+                {/* Submenu Desktop (When Expanded) */}
                 {hasSubmenu && isSubmenuOpen && isExpanded && (
                   <div className="mt-1 ml-5 pl-4 border-l-2 border-slate-100 space-y-1 animate-in slide-in-from-left-2 duration-200">
                     {item.submenu!.map((subitem: any, subidx: number) => {
@@ -629,7 +689,7 @@ const Sidebar = () => {
               <div className="p-5">
                 <div className="bg-white rounded-3xl border-2 border-white p-4 text-center shadow-sm">
                   <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">
-                    © 2026 Syntax 13
+                    © 2026 Masjid Al-Hikmah 13
                   </p>
                 </div>
               </div>

@@ -21,6 +21,7 @@ import {
   Newspaper
 } from "lucide-react";
 import PageBanner from "@/components/ui/PageBanner";
+import SafeImage from "@/components/ui/SafeImage";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import ConfirmDialog from "@/components/ui/ConfirmDialog";
@@ -402,15 +403,15 @@ const News = () => {
                     <div className="flex flex-col sm:flex-row relative sm:h-48 h-full">
                       {/* Image Area */}
                       <div className="w-full sm:w-60 h-44 sm:h-full shrink-0 relative overflow-hidden bg-slate-100">
-                        <img
-                          src={
-                            item.image ||
-                            "https://images.unsplash.com/photo-1633613286991-611bcfb63dba?auto=format&fit=crop&w=800&q=80"
-                          }
+                        <SafeImage
+                          src={item.image}
                           alt={item.title}
+                          fallbackType="thumbnail"
+                          contentType="berita"
+                          fallbackName={item.title}
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                         />
-                        <div className="absolute inset-0 bg-linear-to-t from-slate-900/60 via-transparent to-transparent sm:hidden" />
+                        <div className="absolute inset-0 bg-linear-to-t from-slate-900/60 via-transparent to-transparent sm:hidden pointer-events-none" />
                         <span
                           className={`absolute top-3 left-3 px-2.5 py-0.5 rounded-full text-[9px] uppercase font-black shadow-lg tracking-wider border-2 border-white/20 backdrop-blur-sm ${categoryStyles[item.category] || "bg-emerald-500 text-white"}`}
                         >

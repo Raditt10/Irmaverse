@@ -40,6 +40,7 @@ interface SocketContextType {
   stopTyping: (conversationId: string) => void;
   markAsRead: (conversationId: string, messageIds: string[]) => void;
   updateLastSeen: () => void;
+  updateAvatar: (avatarUrl: string) => void;
 }
 
 const SocketContext = createContext<SocketContextType | null>(null);
@@ -57,7 +58,7 @@ interface SocketProviderProps {
 }
 
 export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
-  const { data: session } = useSession();
+  const { data: session, update: updateSession } = useSession();
   const [socket, setSocket] = useState<Socket | null>(null);
   const [isConnected, setIsConnected] = useState(false);
   const [onlineUsers, setOnlineUsers] = useState<Map<string, PresenceData>>(new Map());
@@ -142,12 +143,36 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
       });
     });
 
+    // Handle avatar updates in real-time
+    socketInstance.on(
+      "user:avatar-updated",
+      (data: { userId: string; avatarUrl: string }) => {
+        // If current user, update NextAuth session
+        if (data.userId === session?.user?.id && updateSession) {
+          updateSession({
+            user: {
+              avatar: data.avatarUrl,
+            },
+          }).catch((err) =>
+            console.error("Session avatar update error:", err),
+          );
+        }
+
+        // Dispatch window event for instant UI update
+        if (typeof window !== "undefined") {
+          window.dispatchEvent(
+            new CustomEvent("user-avatar-updated", { detail: data }),
+          );
+        }
+      },
+    );
+
     setSocket(socketInstance);
 
     return () => {
       socketInstance.disconnect();
     };
-  }, [session?.user?.id, session?.user?.role, session?.user?.name]);
+  }, [session?.user?.id, session?.user?.role, session?.user?.name, updateSession]);
 
   const joinConversation = useCallback((conversationId: string) => {
     if (socket) {
@@ -207,6 +232,18 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
     }
   }, [socket, session?.user]);
 
+  const updateAvatar = useCallback(
+    (avatarUrl: string) => {
+      if (socket && session?.user?.id) {
+        socket.emit("user:avatar-update", {
+          userId: session.user.id,
+          avatarUrl,
+        });
+      }
+    },
+    [socket, session?.user?.id],
+  );
+
   // Update last seen every 5 minutes (only when tab is visible)
   useEffect(() => {
     if (!session?.user?.id) return;
@@ -237,6 +274,7 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
         stopTyping,
         markAsRead,
         updateLastSeen,
+        updateAvatar,
       }}
     >
       {children}

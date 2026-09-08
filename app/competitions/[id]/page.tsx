@@ -10,6 +10,7 @@ import Toast from "@/components/ui/Toast";
 import Loading from "@/components/ui/Loading";
 import ButtonEdit from "@/components/ui/ButtonEdit";
 import DeleteButton from "@/components/ui/DeleteButton";
+import SafeImage from "@/components/ui/SafeImage";
 import { 
   ArrowLeft, 
   Calendar, 
@@ -240,12 +241,15 @@ const CompetitionDetail = () => {
             <div className="relative bg-white rounded-[2.5rem] border-2 border-slate-200 shadow-[0_8px_0_0_#cbd5e1] overflow-hidden group">
               {/* Image Banner */}
               <div className="relative h-64 md:h-80 w-full overflow-hidden border-b-2 border-slate-200">
-                <img
-                   src={competition.thumbnailUrl || "https://picsum.photos/seed/competition/1200/600"}
+                <SafeImage
+                   src={competition.thumbnailUrl}
                    alt={competition.title}
+                   fallbackType="thumbnail"
+                   contentType="lomba"
+                   fallbackName={competition.title}
                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                 />
-                <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/20 to-transparent" />
+                <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/20 to-transparent pointer-events-none" />
                 
                 {/* Content Overlay */}
                 <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8">

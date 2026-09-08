@@ -36,3 +36,21 @@ export async function emitNotificationsToUsers(
     ),
   );
 }
+
+/**
+ * Broadcast an avatar update to all connected clients via WebSocket.
+ */
+export async function emitAvatarUpdate(userId: string, avatarUrl: string) {
+  try {
+    const port = process.env.PORT || "3000";
+    const baseUrl = `http://localhost:${port}`;
+
+    await fetch(`${baseUrl}/__internal/update-avatar`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ userId, avatarUrl }),
+    });
+  } catch (error) {
+    console.error("[emitAvatarUpdate] Failed to push avatar update via socket:", error);
+  }
+}

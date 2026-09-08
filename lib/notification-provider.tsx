@@ -56,6 +56,12 @@ interface NotificationContextType {
   ) => Promise<void>;
   /** Remove a notification from local state (optimistic) */
   dismiss: (id: string) => void;
+  /** Delete a single notification from database & state */
+  deleteNotification: (id: string) => Promise<boolean>;
+  /** Delete multiple notifications from database & state */
+  deleteNotifications: (ids: string[]) => Promise<boolean>;
+  /** Delete all notifications from database & state */
+  deleteAllNotifications: () => Promise<boolean>;
 }
 
 const NotificationContext = createContext<NotificationContextType | null>(null);
@@ -253,6 +259,73 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
     });
   }, []);
 
+  const deleteNotification = useCallback(async (id: string) => {
+    try {
+      // Optimistic update
+      setNotifications((prev) => {
+        const target = prev.find((n) => n.id === id);
+        if (target?.status === "unread") {
+          setUnreadCount((c) => Math.max(0, c - 1));
+        }
+        return prev.filter((n) => n.id !== id);
+      });
+
+      const res = await fetch("/api/notifications", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id }),
+      });
+      return res.ok;
+    } catch (error) {
+      console.error("[NotificationProvider] deleteNotification error:", error);
+      return false;
+    }
+  }, []);
+
+  const deleteNotifications = useCallback(async (ids: string[]) => {
+    if (!ids || ids.length === 0) return false;
+    try {
+      // Optimistic update
+      setNotifications((prev) => {
+        const unreadDeleted = prev.filter(
+          (n) => ids.includes(n.id) && n.status === "unread",
+        ).length;
+        if (unreadDeleted > 0) {
+          setUnreadCount((c) => Math.max(0, c - unreadDeleted));
+        }
+        return prev.filter((n) => !ids.includes(n.id));
+      });
+
+      const res = await fetch("/api/notifications", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ids }),
+      });
+      return res.ok;
+    } catch (error) {
+      console.error("[NotificationProvider] deleteNotifications error:", error);
+      return false;
+    }
+  }, []);
+
+  const deleteAllNotifications = useCallback(async () => {
+    try {
+      // Optimistic update
+      setNotifications([]);
+      setUnreadCount(0);
+
+      const res = await fetch("/api/notifications", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ all: true }),
+      });
+      return res.ok;
+    } catch (error) {
+      console.error("[NotificationProvider] deleteAllNotifications error:", error);
+      return false;
+    }
+  }, []);
+
   return (
     <NotificationContext.Provider
       value={{
@@ -264,6 +337,9 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
         markAllAsRead,
         respondToInvitation,
         dismiss,
+        deleteNotification,
+        deleteNotifications,
+        deleteAllNotifications,
       }}
     >
       {children}

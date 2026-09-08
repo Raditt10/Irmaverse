@@ -8,6 +8,7 @@ import Sidebar from "@/components/ui/Sidebar";
 
 import Loading from "@/components/ui/Loading";
 import BackButton from "@/components/ui/BackButton";
+import SafeImage from "@/components/ui/SafeImage";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   ArrowLeft,
@@ -156,81 +157,82 @@ const InstructorDetail = () => {
             <BackButton />
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 lg:gap-6">
             {/* LEFT: Profile Card */}
             <div className="lg:col-span-1">
-              <div className="bg-white border-2 border-slate-200 rounded-4xl shadow-[0_6px_0_0_#cbd5e1] overflow-hidden sticky top-24 px-6 pb-6 pt-10">
-                <div className="absolute top-4 right-4 flex items-center gap-1.5 bg-slate-50 border border-slate-100 px-3 py-1.5 rounded-full">
-                  <span
-                    className={`h-2.5 w-2.5 rounded-full ${online ? "bg-emerald-400 animate-pulse" : "bg-slate-300"}`}
-                  />
-                  <span className="text-[10px] font-black text-slate-500 uppercase tracking-tight">
-                    {formatLastSeen(instructor.lastSeen)}
-                  </span>
+              <div className="bg-white border-2 border-slate-200 rounded-3xl shadow-[0_4px_0_0_#cbd5e1] overflow-hidden sticky top-20 p-5 sm:p-6">
+                <div className="flex justify-end mb-1">
+                  <div className="inline-flex items-center gap-1.5 bg-slate-50 border border-slate-100 px-2.5 py-1 rounded-full">
+                    <span
+                      className={`h-2 w-2 rounded-full ${online ? "bg-emerald-400 animate-pulse" : "bg-slate-300"}`}
+                    />
+                    <span className="text-[10px] font-black text-slate-500 uppercase tracking-tight">
+                      {formatLastSeen(instructor.lastSeen)}
+                    </span>
+                  </div>
                 </div>
+                
                 <div className="relative">
-                  <div className="flex justify-center mb-6">
-                    <Avatar className="h-28 w-28 border-4 border-white shadow-xl">
+                  <div className="flex justify-center mb-4">
+                    <Avatar className="h-20 w-20 sm:h-24 sm:w-24 border-4 border-white shadow-lg">
                       <AvatarImage
-                        src={
-                          instructor.avatar ||
-                          `https://api.dicebear.com/7.x/avataaars/svg?seed=${instructor.name}`
-                        }
+                        src={instructor.avatar || undefined}
                         alt={instructor.name || "Instructor"}
                       />
-                      <AvatarFallback className="bg-emerald-500 text-white font-black text-3xl">
-                        {(instructor.name || "I").substring(0, 2).toUpperCase()}
+                      <AvatarFallback className="bg-emerald-500 text-white font-black text-2xl">
+                        {(instructor.name?.trim().charAt(0) || "I").toUpperCase()}
                       </AvatarFallback>
                     </Avatar>
                   </div>
+
                   <div className="text-center mb-4">
-                    <h1 className="text-2xl font-black text-slate-800 mb-1">
+                    <h1 className="text-xl font-black text-slate-800 mb-1">
                       {instructor.name}
                     </h1>
-                    <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-xs font-black text-emerald-700 uppercase tracking-wider">
-                      <GraduationCap className="h-3.5 w-3.5" />
+                    <div className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-50 border border-emerald-200 text-[11px] font-black text-emerald-700 uppercase tracking-wider">
+                      <GraduationCap className="h-3 w-3" />
                       Instruktur
                     </div>
                     {instructor.bidangKeahlian && (
-                      <p className="text-xs text-slate-400 font-black mt-3 uppercase tracking-widest">
+                      <p className="text-[11px] text-slate-400 font-black mt-1.5 uppercase tracking-widest">
                         {instructor.bidangKeahlian}
                       </p>
                     )}
                   </div>
                   
                   {instructor.bio && (
-                    <div className="bg-slate-50/50 rounded-2xl p-4 mb-6 border border-slate-100 italic">
-                      <p className="text-sm text-slate-600 text-center leading-relaxed">
+                    <div className="bg-slate-50/70 rounded-xl p-3 mb-4 border border-slate-100 italic">
+                      <p className="text-xs text-slate-600 text-center leading-relaxed">
                         "{instructor.bio}"
                       </p>
                     </div>
                   )}
 
                   {instructor.pengalaman && (
-                    <div className="mb-6 px-2">
-                       <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 px-1">Pengalaman</h4>
-                       <p className="text-sm text-slate-700 font-medium leading-relaxed bg-white border-l-4 border-emerald-500 pl-3 py-1">
+                    <div className="mb-4">
+                       <h4 className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1 px-1">Pengalaman</h4>
+                       <p className="text-xs text-slate-700 font-medium leading-relaxed bg-white border-l-4 border-emerald-500 pl-2.5 py-1">
                         {instructor.pengalaman}
                        </p>
                     </div>
                   )}
 
-                  <div className="mt-6 space-y-4">
-                    <div className="flex items-center gap-4 text-sm bg-slate-50/50 p-3 rounded-2xl border border-slate-100">
-                      <div className="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center shrink-0 border border-emerald-100">
-                        <Mail className="h-4 w-4 text-emerald-600" />
+                  <div className="space-y-2.5 pt-1 border-t border-slate-100">
+                    <div className="flex items-center gap-3 text-xs bg-slate-50/60 p-2.5 rounded-xl border border-slate-100">
+                      <div className="w-8 h-8 rounded-lg bg-emerald-50 flex items-center justify-center shrink-0 border border-emerald-100 text-emerald-600">
+                        <Mail className="h-3.5 w-3.5" />
                       </div>
                       <div className="flex flex-col min-w-0">
-                         <span className="text-[10px] font-bold text-slate-400 uppercase tracking-tight">Email</span>
+                         <span className="text-[9px] font-bold text-slate-400 uppercase tracking-tight">Email</span>
                          <span className="text-slate-600 font-bold truncate text-xs">{instructor.email}</span>
                       </div>
                     </div>
-                    <div className="flex items-center gap-4 text-sm bg-slate-50/50 p-3 rounded-2xl border border-slate-100">
-                      <div className="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center shrink-0 border border-emerald-100">
-                        <Calendar className="h-4 w-4 text-emerald-600" />
+                    <div className="flex items-center gap-3 text-xs bg-slate-50/60 p-2.5 rounded-xl border border-slate-100">
+                      <div className="w-8 h-8 rounded-lg bg-emerald-50 flex items-center justify-center shrink-0 border border-emerald-100 text-emerald-600">
+                        <Calendar className="h-3.5 w-3.5" />
                       </div>
                       <div className="flex flex-col">
-                         <span className="text-[10px] font-bold text-slate-400 uppercase tracking-tight">Bergabung</span>
+                         <span className="text-[9px] font-bold text-slate-400 uppercase tracking-tight">Bergabung</span>
                          <span className="text-slate-600 font-bold text-xs">
                           {new Date(instructor.createdAt).toLocaleDateString(
                             "id-ID",
@@ -241,85 +243,89 @@ const InstructorDetail = () => {
                     </div>
                   </div>
                   
-                  <div className="mt-8">
-                     <button 
-                        onClick={() => router.push(`/instructors/chat?instructorId=${instructor.id}`)}
-                        className="w-full flex items-center justify-center gap-3 px-6 py-4 bg-teal-50 text-teal-600 font-black rounded-2xl border-2 border-teal-100 hover:bg-teal-100 hover:border-teal-200 active:scale-95 transition-all text-sm uppercase tracking-wide"
-                     >
-                        <MessageCircle className="h-5 w-5" />
-                        Kirim Pesan
-                      </button>
-                  </div>
+                  {session?.user?.role?.toLowerCase() !== "instruktur" && session?.user?.id !== instructor.id && (
+                    <div className="mt-5">
+                       <button 
+                          onClick={() => router.push(`/instructors/chat?instructorId=${instructor.id}`)}
+                          className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-teal-50 text-teal-600 font-black rounded-xl border-2 border-teal-100 hover:bg-teal-100 hover:border-teal-200 active:scale-95 transition-all text-xs uppercase tracking-wide"
+                       >
+                          <MessageCircle className="h-4 w-4" />
+                          Kirim Pesan
+                        </button>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
 
             {/* RIGHT: Stats & Materials */}
-            <div className="lg:col-span-2 space-y-6">
+            <div className="lg:col-span-2 space-y-5">
               {/* Stat Cards */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                 {[
                   {
-                    icon: <BookOpen className="h-7 w-7 text-emerald-500" />,
+                    icon: <BookOpen className="h-5 w-5 text-emerald-500" />,
                     val: stats?.completedKajianCount || 0,
-                    lbl: "KAJIAN YANG DIISI OLEH INSTRUKTUR",
-                    bg: "bg-emerald-50",
+                    lbl: "Kajian Yang Selesai",
+                    bg: "bg-emerald-50/70",
                     bdr: "border-emerald-100",
                     hv: "hover:border-emerald-300 hover:shadow-[0_4px_0_0_#10b981]",
                   },
                   {
-                    icon: <Star className="h-7 w-7 text-emerald-500" fill="currentColor" />,
+                    icon: <Star className="h-5 w-5 text-emerald-500" fill="currentColor" />,
                     val: stats?.averageRating || 0,
-                    lbl: "RATA-RATA RATING",
-                    bg: "bg-emerald-50",
+                    lbl: "Rata-Rata Rating",
+                    bg: "bg-emerald-50/70",
                     bdr: "border-emerald-100",
                     hv: "hover:border-emerald-300 hover:shadow-[0_4px_0_0_#10b981]",
                   },
                 ].map((s, i) => (
                   <div
                     key={i}
-                    className={`flex flex-col items-center justify-center p-6 rounded-3xl ${s.bg} border-2 ${s.bdr} transition-all duration-300 ${s.hv} group cursor-default h-full`}
+                    className={`flex items-center gap-4 p-4 sm:p-5 rounded-2xl ${s.bg} border-2 ${s.bdr} transition-all duration-300 ${s.hv} group cursor-default`}
                   >
-                    <div className="w-14 h-14 bg-white/50 backdrop-blur-sm rounded-2xl flex items-center justify-center mb-3 group-hover:scale-110 transition-transform duration-300 shadow-sm border border-white/50">
+                    <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center group-hover:scale-105 transition-transform duration-300 shadow-xs border border-emerald-100 shrink-0">
                       {s.icon}
                     </div>
-                    <div className="text-3xl font-black text-slate-800 group-hover:text-slate-900 leading-none mb-1">
-                      {s.val}
-                    </div>
-                    <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
-                      {s.lbl}
+                    <div>
+                      <div className="text-2xl font-black text-slate-800 group-hover:text-slate-900 leading-none mb-1">
+                        {s.val}
+                      </div>
+                      <div className="text-[10px] font-black text-slate-400 uppercase tracking-wider">
+                        {s.lbl}
+                      </div>
                     </div>
                   </div>
                 ))}
               </div>
 
               {/* Materials Section */}
-              <div className="bg-white border-2 border-slate-200 rounded-[2.5rem] p-8 shadow-[0_8px_0_0_#cbd5e1]">
-                <div className="flex items-center justify-between mb-8">
-                  <div className="flex items-center gap-4">
-                    <div className="w-14 h-14 bg-emerald-50 rounded-2xl flex items-center justify-center border-2 border-emerald-100">
-                      <BookOpen className="h-8 w-8 text-emerald-600" />
+              <div className="bg-white border-2 border-slate-200 rounded-3xl p-5 sm:p-6 shadow-[0_4px_0_0_#cbd5e1]">
+                <div className="flex items-center justify-between mb-5">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-emerald-50 rounded-xl flex items-center justify-center border-2 border-emerald-100">
+                      <BookOpen className="h-5 w-5 text-emerald-600" />
                     </div>
                     <div>
-                      <h2 className="text-2xl font-black text-slate-800 leading-none mb-1">
+                      <h2 className="text-lg sm:text-xl font-black text-slate-800 leading-none mb-0.5">
                         Daftar Kajian
                       </h2>
-                      <p className="text-[11px] text-slate-400 font-black uppercase tracking-widest">
-                         Kajian yang dibawakan oleh {instructor.name?.split(" ")[0]}
+                      <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">
+                         Kajian oleh {instructor.name?.split(" ")[0]}
                       </p>
                     </div>
                   </div>
                 </div>
 
                 {materials.length === 0 ? (
-                  <div className="text-center py-20 bg-slate-50/50 rounded-[2.5rem] border-2 border-dashed border-slate-100 flex flex-col items-center justify-center">
-                    <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center mb-4 shadow-sm border border-slate-50">
-                      <BookOpen className="h-8 w-8 text-slate-300" />
+                  <div className="text-center py-12 bg-slate-50/50 rounded-2xl border-2 border-dashed border-slate-100 flex flex-col items-center justify-center">
+                    <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center mb-3 shadow-xs border border-slate-100">
+                      <BookOpen className="h-6 w-6 text-slate-300" />
                     </div>
-                    <p className="text-slate-500 font-bold text-sm mb-1">
+                    <p className="text-slate-500 font-bold text-xs mb-0.5">
                       Belum ada kajian yang diselesaikan
                     </p>
-                    <p className="text-[10px] text-slate-400 font-medium uppercase tracking-widest">
+                    <p className="text-[10px] text-slate-400 font-medium">
                        Ikuti kajian dan selesaikan untuk melihat rekapan di sini
                     </p>
                   </div>
@@ -330,14 +336,14 @@ const InstructorDetail = () => {
                   const shown = tuntasMaterials.slice(0, 3);
 
                   if (tuntasMaterials.length === 0) return (
-                    <div className="text-center py-16 bg-slate-50/50 rounded-[2.5rem] border-2 border-dashed border-slate-100 flex flex-col items-center justify-center">
-                      <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center mb-4 shadow-sm border border-slate-50">
-                        <BookOpen className="h-8 w-8 text-slate-300" />
+                    <div className="text-center py-12 bg-slate-50/50 rounded-2xl border-2 border-dashed border-slate-100 flex flex-col items-center justify-center">
+                      <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center mb-3 shadow-xs border border-slate-100">
+                        <BookOpen className="h-6 w-6 text-slate-300" />
                       </div>
-                      <p className="text-slate-500 font-bold text-sm mb-1">
+                      <p className="text-slate-500 font-bold text-xs mb-0.5">
                         Belum ada kajian yang diselesaikan
                       </p>
-                      <p className="text-[10px] text-slate-400 font-medium uppercase tracking-widest text-center px-4">
+                      <p className="text-[10px] text-slate-400 font-medium text-center px-4">
                         Ikuti kajian dan selesaikan untuk melihat rekapan di sini
                       </p>
                     </div>
@@ -345,50 +351,47 @@ const InstructorDetail = () => {
 
                   return (
                     <>
-                      <div className="overflow-y-auto max-h-[420px] space-y-4 pr-1 scrollbar-thin scrollbar-thumb-slate-200 scrollbar-track-transparent">
+                      <div className="space-y-3">
                         {shown.map((m) => (
                           <div
                             key={m.id}
                             onClick={() => router.push(`/materials/${m.id}`)}
-                            className="flex items-center gap-5 p-5 rounded-3xl bg-slate-50/50 border-2 border-slate-100 hover:bg-white hover:border-emerald-200 hover:shadow-lg transition-all group cursor-pointer"
+                            className="flex items-center gap-3.5 p-3 sm:p-4 rounded-2xl bg-slate-50/60 border border-slate-100 hover:bg-white hover:border-emerald-200 hover:shadow-md transition-all group cursor-pointer"
                           >
-                            <div className="w-24 h-24 rounded-2xl overflow-hidden shrink-0 border-2 border-white shadow-md group-hover:scale-105 transition-transform bg-slate-200">
-                               {m.thumbnailUrl ? (
-                                  <img 
-                                    src={m.thumbnailUrl} 
-                                    alt={m.title} 
-                                    className="w-full h-full object-cover"
-                                  />
-                               ) : (
-                                  <div className="w-full h-full flex items-center justify-center bg-emerald-50">
-                                     <BookOpen className="h-8 w-8 text-emerald-200" />
-                                  </div>
-                               )}
+                            <div className="w-16 h-16 sm:w-18 sm:h-18 rounded-xl overflow-hidden shrink-0 border border-slate-200 shadow-xs group-hover:scale-105 transition-transform bg-slate-100">
+                               <SafeImage 
+                                 src={m.thumbnailUrl} 
+                                 alt={m.title} 
+                                 fallbackType="thumbnail"
+                                 contentType="kajian"
+                                 fallbackName={m.title}
+                                 className="w-full h-full object-cover"
+                               />
                             </div>
                             <div className="flex-1 min-w-0">
-                              <div className="flex items-center gap-2 mb-1.5 text-[9px] font-black uppercase tracking-widest">
-                                 <span className="px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded-full border border-emerald-200">
+                              <div className="flex items-center gap-1.5 mb-1 text-[9px] font-black uppercase tracking-wider">
+                                 <span className="px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded-md">
                                     {m.category}
                                  </span>
-                                 <span className="px-2 py-0.5 bg-slate-100 text-slate-600 rounded-full border border-slate-200">
+                                 <span className="px-2 py-0.5 bg-slate-100 text-slate-600 rounded-md">
                                     Kelas {m.grade}
                                  </span>
                               </div>
-                              <h4 className="font-black text-slate-700 text-lg truncate mb-1 group-hover:text-emerald-600 transition-colors">
+                              <h4 className="font-black text-slate-800 text-sm sm:text-base truncate mb-1 group-hover:text-emerald-600 transition-colors">
                                 {m.title}
                               </h4>
                               <div className="flex items-center gap-3 text-slate-400">
                                  <div className="flex items-center gap-1">
-                                    <Clock className="h-3.5 w-3.5" />
-                                    <span className="text-[11px] font-bold uppercase tracking-tight">
+                                    <Clock className="h-3 w-3" />
+                                    <span className="text-[10px] font-bold">
                                        {formatDate(m.date)}
                                     </span>
                                  </div>
                               </div>
                             </div>
-                            <div className="hidden sm:flex flex-col items-end gap-2">
-                               <div className="w-10 h-10 rounded-full bg-white border border-slate-100 flex items-center justify-center text-emerald-500 shadow-sm group-hover:bg-emerald-500 group-hover:text-white transition-all">
-                                  <ArrowLeft className="h-5 w-5 rotate-180" />
+                            <div className="hidden sm:flex flex-col items-end shrink-0">
+                               <div className="w-8 h-8 rounded-full bg-white border border-slate-100 flex items-center justify-center text-emerald-500 shadow-xs group-hover:bg-emerald-500 group-hover:text-white transition-all">
+                                  <ArrowLeft className="h-4 w-4 rotate-180" />
                                </div>
                             </div>
                           </div>
