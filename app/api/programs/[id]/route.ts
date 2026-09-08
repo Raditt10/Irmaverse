@@ -41,7 +41,21 @@ export async function GET(
           orderBy: { date: "asc" },
         },
         program_enrollments: {
-          select: { id: true, userId: true, enrolledAt: true },
+          select: {
+            id: true,
+            userId: true,
+            enrolledAt: true,
+            users: {
+              select: {
+                id: true,
+                name: true,
+                email: true,
+                avatar: true,
+                role: true,
+              },
+            },
+          },
+          orderBy: { enrolledAt: "desc" },
         },
       },
     });
@@ -215,6 +229,15 @@ export async function GET(
       usedKajianOrders: instructorMaterials
         .map((m: any) => m.kajianOrder)
         .filter((order: any) => order !== null && order !== undefined),
+      enrolledMembers: program.program_enrollments.map((e) => ({
+        enrollmentId: e.id,
+        userId: e.userId,
+        enrolledAt: e.enrolledAt,
+        name: e.users?.name || "Pengguna",
+        email: e.users?.email || "-",
+        avatar: e.users?.avatar || null,
+        role: e.users?.role || "user",
+      })),
     };
 
     return NextResponse.json(result);

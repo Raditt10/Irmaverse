@@ -327,7 +327,7 @@ export default function DashboardHeader() {
   const displayAvatar =
     currentAvatar ||
     (session?.user as any)?.avatar ||
-    `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(userName)}`;
+    undefined;
   const userEmail = session?.user?.email || "user@irmaverse.com";
   const userInitials = userName.trim().charAt(0).toUpperCase() || "U";
 

@@ -64,14 +64,44 @@ export async function POST(
       }
     }
 
+    let targetUserId = session.user.id;
+    let body: any = null;
+    try {
+      body = await req.json();
+    } catch (e) {
+      // Body may be empty if simple POST
+    }
+
+    if (body?.userId) {
+      if (!isPrivileged) {
+        return NextResponse.json(
+          { error: "Hanya instruktur atau admin yang dapat mendaftarkan pengguna lain" },
+          { status: 403 },
+        );
+      }
+      targetUserId = body.userId;
+    }
+
+    // Check target user existence
+    const targetUser = await prisma.users.findUnique({
+      where: { id: targetUserId },
+      select: { id: true, name: true },
+    });
+    if (!targetUser) {
+      return NextResponse.json(
+        { error: "Pengguna tidak ditemukan" },
+        { status: 404 },
+      );
+    }
+
     // Check if already enrolled
     const existing = await prisma.program_enrollments.findUnique({
-      where: { programId_userId: { programId: id, userId: session.user.id } },
+      where: { programId_userId: { programId: id, userId: targetUserId } },
     });
 
     if (existing) {
       return NextResponse.json(
-        { message: "Sudah terdaftar di program ini" },
+        { message: "Pengguna sudah terdaftar di program ini" },
         { status: 200 },
       );
     }
@@ -80,14 +110,14 @@ export async function POST(
       data: {
         id: crypto.randomUUID(),
         programId: id,
-        userId: session.user.id,
+        userId: targetUserId,
       },
     });
 
     // Grant XP for program enrollment
     try {
       await grantXp({
-        userId: session.user.id,
+        userId: targetUserId,
         type: "program_enrolled",
         title: `Mendaftar Program: ${program.title}`,
         description: `Berhasil mendaftar di program ${program.title}`,
@@ -98,11 +128,78 @@ export async function POST(
     }
 
     return NextResponse.json(
-      { message: "Berhasil mendaftar di program" },
+      { message: `Berhasil mendaftarkan ${targetUser.name || "anggota"} ke program` },
       { status: 201 },
     );
   } catch (error) {
     console.error("Error enrolling in program:", error);
     return NextResponse.json({ error: "Gagal mendaftar" }, { status: 500 });
+  }
+}
+
+// DELETE: Unenroll user from program (Self or Privileged)
+export async function DELETE(
+  req: NextRequest,
+  { params }: { params: Promise<{ id: string }> },
+) {
+  try {
+    const session = await auth();
+    if (!session || !session.user) {
+      return NextResponse.json(
+        { error: "Tidak terautentikasi" },
+        { status: 401 },
+      );
+    }
+
+    const { id } = await params;
+    const { searchParams } = new URL(req.url);
+    const queryUserId = searchParams.get("userId");
+
+    const user = await prisma.users.findUnique({
+      where: { id: session.user.id },
+      select: { role: true },
+    });
+    const isPrivileged =
+      user?.role === "instruktur" ||
+      user?.role === "admin" ||
+      user?.role === "super_admin";
+
+    let targetUserId = session.user.id;
+    if (queryUserId && queryUserId !== session.user.id) {
+      if (!isPrivileged) {
+        return NextResponse.json(
+          { error: "Tidak memiliki izin untuk mengeluarkan anggota" },
+          { status: 403 },
+        );
+      }
+      targetUserId = queryUserId;
+    }
+
+    const existing = await prisma.program_enrollments.findUnique({
+      where: { programId_userId: { programId: id, userId: targetUserId } },
+      include: { users: { select: { name: true } } },
+    });
+
+    if (!existing) {
+      return NextResponse.json(
+        { error: "Anggota tidak terdaftar pada program ini" },
+        { status: 404 },
+      );
+    }
+
+    await prisma.program_enrollments.delete({
+      where: { programId_userId: { programId: id, userId: targetUserId } },
+    });
+
+    return NextResponse.json(
+      { message: `Berhasil mengeluarkan ${existing.users?.name || "anggota"} dari program` },
+      { status: 200 },
+    );
+  } catch (error) {
+    console.error("Error deleting program enrollment:", error);
+    return NextResponse.json(
+      { error: "Gagal mengeluarkan anggota dari program" },
+      { status: 500 },
+    );
   }
 }

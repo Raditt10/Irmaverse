@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import  prisma  from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 
-export async function GET() {
+export async function GET(req: Request) {
   try {
     const session = await auth();
     // Hanya admin/instruktur yang boleh lihat list user
@@ -10,17 +10,31 @@ export async function GET() {
         return NextResponse.json([], { status: 403 });
     }
 
+    const { searchParams } = new URL(req.url);
+    const search = searchParams.get("search")?.trim();
+    const limit = parseInt(searchParams.get("limit") || "100", 10);
+
+    const whereClause: any = {
+      role: 'user',
+    };
+
+    if (search) {
+      whereClause.OR = [
+        { name: { contains: search } },
+        { email: { contains: search } },
+      ];
+    }
+
     const users = await prisma.users.findMany({
-      where: {
-        role: 'user' // Hanya ambil siswa biasa
-      },
+      where: whereClause,
       select: {
         id: true,
         name: true,
         email: true,
         avatar: true
       },
-      take: 50 // Batasi agar query ringan
+      orderBy: { name: "asc" },
+      take: limit > 0 ? limit : 100
     });
 
     return NextResponse.json(users);
